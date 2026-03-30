@@ -1,5 +1,4 @@
 import Link from "next/link";
-
 import { prisma } from "@/lib/prisma";
 import { centsToCurrency } from "@/lib/utils";
 import { PageHeader, SectionCard } from "@/components/ui";
@@ -7,8 +6,7 @@ import { PageHeader, SectionCard } from "@/components/ui";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [customerCount, visitCount, serviceCount, bookingCount, totalCollected] =
-    await Promise.all([
+  const [customerCount, visitCount, serviceCount, bookingCount, totalCollected] = await Promise.all([
       prisma.customer.count(),
       prisma.visit.count(),
       prisma.service.count({ where: { active: true } }),
@@ -36,9 +34,10 @@ export default async function Home() {
         action={
           <Link
             href="/checkin"
+            target="_blank"
             className="rounded-full bg-rose-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-rose-600"
           >
-            Open Client Check-In
+            Launch iPad Check-In Window
           </Link>
         }
       />
@@ -56,7 +55,7 @@ export default async function Home() {
           title="Client check-in"
           description="Use this page for new or returning clients. Returning clients can be found by phone or email."
         >
-          <Link href="/checkin" className="text-sm font-semibold text-rose-600">
+          <Link href="/checkin" target="_blank" className="text-sm font-semibold text-rose-600">
             Go to check-in
           </Link>
         </SectionCard>

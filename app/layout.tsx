@@ -41,8 +41,7 @@ export default function RootLayout({
                 </div>
                 <nav className="flex flex-wrap gap-2">
                   <AppNavLink href="/">Home</AppNavLink>
-                  <AppNavLink href="/checkin">Check-In</AppNavLink>
-                  <AppNavLink href="/admin">Admin</AppNavLink>
+                  {/* Hide internal links from public visitors */}
                 </nav>
               </div>
             </div>

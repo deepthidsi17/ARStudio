@@ -1,82 +1,90 @@
-import Link from "next/link";
-
 import { prisma } from "@/lib/prisma";
+import Image from "next/image";
+import Link from "next/link";
 import { centsToCurrency } from "@/lib/utils";
-import { PageHeader, SectionCard } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [customerCount, visitCount, serviceCount, bookingCount, totalCollected] =
-    await Promise.all([
-      prisma.customer.count(),
-      prisma.visit.count(),
-      prisma.service.count({ where: { active: true } }),
-      prisma.calendlyEvent.count(),
-      prisma.visit.aggregate({ _sum: { amountPaidCents: true } }),
-    ]);
-
-  const stats = [
-    { label: "Customers", value: customerCount.toString() },
-    { label: "Visits", value: visitCount.toString() },
-    { label: "Active services", value: serviceCount.toString() },
-    { label: "Calendly bookings", value: bookingCount.toString() },
-    {
-      label: "Recorded payments",
-      value: centsToCurrency(totalCollected._sum.amountPaidCents ?? 0),
-    },
-  ];
+  const services = await prisma.service.findMany({
+    where: { active: true },
+    orderBy: { name: "asc" }
+  });
 
   return (
-    <div className="space-y-8">
-      <PageHeader
-        eyebrow="AR Studio"
-        title="Client intake and bookings"
-        description="Keep client intake simple, review upcoming bookings, and keep salon operations organized in one place."
-        action={
-          <Link
-            href="/checkin"
-            className="rounded-full bg-rose-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-rose-600"
-          >
-            Open Client Check-In
-          </Link>
-        }
-      />
+    <div className="space-y-16 pb-16">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden rounded-[3rem] bg-stone-900 px-6 py-24 text-center sm:px-12 sm:py-32">
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute -left-1/4 -top-1/4 h-[150%] w-[150%] animate-[spin_20s_linear_infinite] bg-[conic-gradient(at_center,transparent_40%,#fda4af_80%,transparent)]" />
+        </div>
+        <div className="relative z-10 mx-auto max-w-2xl">
+          <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
+            Elevate your style at AR Studio.
+          </h1>
+          <p className="mt-6 text-lg leading-8 text-stone-300">
+            Expert hair, makeup, and styling services tailored just for you. Book your next appointment today and experience the difference.
+          </p>
+          <div className="mt-10 flex items-center justify-center gap-x-6">
+            {/* The user can update this calendly link! */}
+            <a
+              href="#"
+              className="rounded-full bg-rose-500 px-8 py-4 text-base font-semibold text-white shadow-sm transition hover:bg-rose-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-500"
+            >
+              Book an Appointment
+            </a>
+          </div>
+        </div>
+      </section>
 
-      <div className="grid gap-4 md:grid-cols-5">
-        {stats.map((stat) => (
-          <SectionCard key={stat.label} title={stat.value} className="p-5" description={stat.label}>
-            <div />
-          </SectionCard>
-        ))}
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-3">
-        <SectionCard
-          title="Client check-in"
-          description="Use this page for new or returning clients. Returning clients can be found by phone or email."
-        >
-          <Link href="/checkin" className="text-sm font-semibold text-rose-600">
-            Go to check-in
-          </Link>
-        </SectionCard>
-        <SectionCard
-          title="Calendly booking sync"
-          description="Pull appointments into the app and match them to customer records by phone or email."
-        >
-          <Link href="/bookings" className="text-sm font-semibold text-rose-600">
-            Review bookings
-          </Link>
-        </SectionCard>
-        <SectionCard
-          title="Staff pages"
-          description="Customers, visits, services, and daily reporting stay grouped in a separate staff-only area."
-        >
-          <Link href="/staff" className="text-sm font-semibold text-rose-600">
-            Open staff pages
-          </Link>
-        </SectionCard>
-      </div>
+      {/* Services Section */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-12 text-center">
+          <h2 className="text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">Our Services</h2>
+          <p className="mt-4 text-lg text-stone-600">Transparent pricing for premium results.</p>
+        </div>
+        
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {services.map((service) => (
+            <div key={service.id} className="group relative overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-sm transition hover:shadow-md">
+              <div className="aspect-[4/3] w-full overflow-hidden bg-stone-100">
+                {service.imageUrl ? (
+                  <img
+                    src={service.imageUrl}
+                    alt={service.name}
+                    className="h-full w-full object-cover object-center transition duration-300 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-rose-50 text-rose-200">
+                    <span className="text-4xl">✦</span>
+                  </div>
+                )}
+              </div>
+              <div className="p-6">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xl font-semibold text-stone-900">{service.name}</h3>
+                  <span className="inline-flex items-center rounded-full bg-stone-100 px-3 py-1 text-sm font-medium text-stone-800">
+                    {centsToCurrency(service.priceDefault ?? 0)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+      
+      {/* Contact & Footer Section */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="rounded-3xl bg-rose-50 px-6 py-12 sm:px-12 sm:py-16 text-center">
+          <h2 className="text-2xl font-bold tracking-tight text-stone-900">Have questions?</h2>
+          <p className="mt-2 text-stone-600">We'd love to hear from you. Get in touch to discuss custom packages or special requests.</p>
+          <div className="mt-6 flex justify-center">
+            <a href="mailto:hello@arglamstudio.com" className="font-semibold text-rose-600 hover:text-rose-500">
+              Email Us <span aria-hidden="true">&rarr;</span>
+            </a>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

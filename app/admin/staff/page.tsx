@@ -4,22 +4,22 @@ import { PageHeader, SectionCard } from "@/components/ui";
 
 const staffPages = [
   {
-    href: "/customers",
+    href: "/admin/customers",
     title: "Customers",
     description: "Review customer history, contact details, and notes.",
   },
   {
-    href: "/visits",
+    href: "/admin/visits",
     title: "Visits",
     description: "Track completed visits, payments, and follow-up notes.",
   },
   {
-    href: "/services",
+    href: "/admin/services",
     title: "Services",
     description: "Manage the service catalog, pricing, and gallery images.",
   },
   {
-    href: "/reports/daily",
+    href: "/admin/reports/daily",
     title: "Daily Summary",
     description: "Print or export a daily operational summary for staff.",
   },

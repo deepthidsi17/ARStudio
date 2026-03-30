@@ -38,14 +38,11 @@ export default function RootLayout({
                   <Link href="/" className="text-2xl font-semibold tracking-tight text-stone-900">
                     AR Studio
                   </Link>
-                  <p className="text-sm text-stone-600">
-                    Client intake, booking coordination, and salon operations for AR Studio.
-                  </p>
                 </div>
                 <nav className="flex flex-wrap gap-2">
-                  <AppNavLink href="/checkin">Client Check-In</AppNavLink>
-                  <AppNavLink href="/bookings">Bookings</AppNavLink>
-                  <AppNavLink href="/staff">Staff Pages</AppNavLink>
+                  <AppNavLink href="/">Home</AppNavLink>
+                  <AppNavLink href="/checkin">Check-In</AppNavLink>
+                  <AppNavLink href="/admin">Admin</AppNavLink>
                 </nav>
               </div>
             </div>

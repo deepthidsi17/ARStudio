@@ -14,7 +14,13 @@ export default async function Home() {
   const addOnKeywords = ["Travel", "Early Morning"];
   const isAddOn = (name: string) => addOnKeywords.some((kw) => name.includes(kw));
 
-  const coreServices = services.filter((s) => !isAddOn(s.name));
+  const isMakeup = (name: string) => name.includes("Makeup") || name.includes("Glam") || name.includes("Look");
+  const isHair = (name: string) => name.includes("Hair");
+  const isSaree = (name: string) => name.includes("Saree");
+
+  const makeupServices = services.filter((s) => !isAddOn(s.name) && isMakeup(s.name));
+  const hairServices = services.filter((s) => !isAddOn(s.name) && isHair(s.name));
+  const sareeServices = services.filter((s) => !isAddOn(s.name) && isSaree(s.name));
   const addOns = services.filter((s) => isAddOn(s.name));
 
   return (
@@ -50,32 +56,84 @@ export default async function Home() {
           <p className="mt-4 text-lg text-stone-600">Transparent pricing for premium results.</p>
         </div>
         
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {coreServices.map((service) => (
-            <div key={service.id} className="group relative overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-sm transition hover:shadow-md">
-              <div className="aspect-[4/3] w-full overflow-hidden bg-stone-100">
-                {service.imageUrl ? (
-                  <img
-                    src={service.imageUrl}
-                    alt={service.name}
-                    className="h-full w-full object-cover object-center transition duration-300 group-hover:scale-105"
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-rose-50 text-rose-200">
-                    <span className="text-4xl">✦</span>
+        <div className="space-y-16">
+          {/* Makeup Category */}
+          {makeupServices.length > 0 && (
+            <div>
+              <h3 className="mb-6 text-2xl font-semibold text-stone-900">Makeup</h3>
+              <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                {makeupServices.map((service) => (
+                  <div key={service.id} className="group relative overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-sm transition hover:shadow-md">
+                    <div className="aspect-[4/3] w-full overflow-hidden bg-stone-100">
+                      {service.imageUrl ? (
+                        <img src={service.imageUrl} alt={service.name} className="h-full w-full object-cover object-center transition duration-300 group-hover:scale-105" />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center bg-rose-50 text-rose-200"><span className="text-4xl">✦</span></div>
+                      )}
+                    </div>
+                    <div className="p-6">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-xl font-semibold text-stone-900">{service.name}</h3>
+                        <span className="inline-flex items-center rounded-full bg-stone-100 px-3 py-1 text-sm font-medium text-stone-800">{centsToCurrency(service.priceDefault ?? 0)}</span>
+                      </div>
+                    </div>
                   </div>
-                )}
-              </div>
-              <div className="p-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xl font-semibold text-stone-900">{service.name}</h3>
-                  <span className="inline-flex items-center rounded-full bg-stone-100 px-3 py-1 text-sm font-medium text-stone-800">
-                    {centsToCurrency(service.priceDefault ?? 0)}
-                  </span>
-                </div>
+                ))}
               </div>
             </div>
-          ))}
+          )}
+
+          {/* Hair Category */}
+          {hairServices.length > 0 && (
+            <div>
+              <h3 className="mb-6 text-2xl font-semibold text-stone-900">Hair Styling</h3>
+              <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                {hairServices.map((service) => (
+                  <div key={service.id} className="group relative overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-sm transition hover:shadow-md">
+                    <div className="aspect-[4/3] w-full overflow-hidden bg-stone-100">
+                      {service.imageUrl ? (
+                        <img src={service.imageUrl} alt={service.name} className="h-full w-full object-cover object-center transition duration-300 group-hover:scale-105" />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center bg-rose-50 text-rose-200"><span className="text-4xl">✦</span></div>
+                      )}
+                    </div>
+                    <div className="p-6">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-xl font-semibold text-stone-900">{service.name}</h3>
+                        <span className="inline-flex items-center rounded-full bg-stone-100 px-3 py-1 text-sm font-medium text-stone-800">{centsToCurrency(service.priceDefault ?? 0)}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Saree Category */}
+          {sareeServices.length > 0 && (
+            <div>
+              <h3 className="mb-6 text-2xl font-semibold text-stone-900">Saree Draping</h3>
+              <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                {sareeServices.map((service) => (
+                  <div key={service.id} className="group relative overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-sm transition hover:shadow-md">
+                    <div className="aspect-[4/3] w-full overflow-hidden bg-stone-100">
+                      {service.imageUrl ? (
+                        <img src={service.imageUrl} alt={service.name} className="h-full w-full object-cover object-center transition duration-300 group-hover:scale-105" />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center bg-rose-50 text-rose-200"><span className="text-4xl">✦</span></div>
+                      )}
+                    </div>
+                    <div className="p-6">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-xl font-semibold text-stone-900">{service.name}</h3>
+                        <span className="inline-flex items-center rounded-full bg-stone-100 px-3 py-1 text-sm font-medium text-stone-800">{centsToCurrency(service.priceDefault ?? 0)}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 

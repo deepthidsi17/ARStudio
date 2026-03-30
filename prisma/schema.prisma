@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum VisitSource {
+  IPAD
+  STAFF
+  CALENDLY
+}
+
+model Customer {
+  id              String          @id @default(cuid())
+  name            String
+  phone           String?
+  normalizedPhone String?         @unique
+  email           String?
+  normalizedEmail String?         @unique
+  notes           String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  visits          Visit[]
+  calendlyEvents  CalendlyEvent[]
+
+  @@index([name])
+}
+
+model Service {
+  id            String         @id @default(cuid())
+  name          String
+  priceDefault  Int?
+  imageUrl      String?
+  active        Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  visitServices VisitService[]
+
+  @@unique([name])
+}
+
+model Visit {
+  id               String         @id @default(cuid())
+  customerId       String
+  calendlyEventId  String?
+  visitAt          DateTime       @default(now())
+  amountPaidCents  Int?
+  paymentMethod    String?
+  notes            String?
+  source           VisitSource    @default(IPAD)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  customer         Customer       @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  calendlyEvent    CalendlyEvent? @relation(fields: [calendlyEventId], references: [id], onDelete: SetNull)
+  visitServices    VisitService[]
+
+  @@index([customerId, visitAt])
+}
+
+model VisitService {
+  id         String   @id @default(cuid())
+  visitId     String
+  serviceId   String
+  serviceName String
+  priceCents  Int?
+  createdAt   DateTime @default(now())
+  service     Service  @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+  visit       Visit    @relation(fields: [visitId], references: [id], onDelete: Cascade)
+
+  @@unique([visitId, serviceId])
+  @@index([serviceId])
+}
+
+model CalendlyEvent {
+  id                     String    @id @default(cuid())
+  calendlyEventUri       String?   @unique
+  calendlyInviteeUri     String?   @unique
+  eventName              String?
+  inviteeName            String?
+  inviteeEmail           String?
+  normalizedInviteeEmail String?
+  inviteePhone           String?
+  normalizedInviteePhone String?
+  scheduledAt            DateTime?
+  status                 String
+  rawPayload             String?
+  matchedCustomerId      String?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+  matchedCustomer        Customer? @relation(fields: [matchedCustomerId], references: [id], onDelete: SetNull)
+  visits                 Visit[]
+
+  @@index([scheduledAt])
+  @@index([normalizedInviteeEmail])
+  @@index([normalizedInviteePhone])
+}

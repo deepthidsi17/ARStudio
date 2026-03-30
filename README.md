@@ -1,3 +1,79 @@
+# AR Studio
+
+AR Studio is a laptop-first salon operations app for customer intake, service tracking, manual payment logging, and Calendly booking sync.
+
+## What it includes
+
+- iPad-friendly customer check-in flow
+- returning customer lookup by phone or email
+- customer history and visit ledger
+- service catalog with default pricing
+- manual payment tracking
+- Calendly sync and booking-to-customer matching
+
+## Local run
+
+1. Copy the env template:
+
+```bash
+cp .env.example .env
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Create the local database and seed services:
+
+```bash
+npm run db:push
+npm run db:generate
+npm run db:seed
+```
+
+4. Start the app:
+
+```bash
+npm run dev
+```
+
+5. Open the app:
+
+- laptop: `http://localhost:3000`
+- iPad on the same Wi-Fi: `http://<your-laptop-local-ip>:3000/checkin`
+
+## Calendly setup
+
+Fill these in `.env` to enable booking sync:
+
+- `CALENDLY_API_TOKEN`
+- `CALENDLY_USER_URI`
+
+Then use the `Bookings` page to run a sync.
+
+Webhook endpoint for later:
+
+- `POST /api/calendly/webhook`
+
+## Main routes
+
+- `/` dashboard
+- `/checkin` iPad check-in
+- `/customers` customer list and history
+- `/visits` visit/payment tracking
+- `/services` service catalog
+- `/bookings` Calendly sync and booking review
+
+## Laptop-first today, cloud later
+
+Version 1 uses SQLite so it is simple to run on a personal laptop. Later, this app can be moved to a VPS with minimal UI changes by:
+
+- switching the database from SQLite to Postgres
+- adding auth
+- exposing the webhook publicly
+- running the same Next.js app behind a reverse proxy
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started

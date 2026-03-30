@@ -81,7 +81,7 @@ export default async function Home() {
                     <div className="p-6">
                       <div className="flex items-center justify-between">
                         <h3 className="text-xl font-semibold text-stone-900">{service.name}</h3>
-                        <span className="inline-flex items-center rounded-full bg-stone-100 px-3 py-1 text-sm font-medium text-stone-800">{centsToCurrency(service.priceDefault ?? 0)}</span>
+                        <span className="inline-flex items-center rounded-full bg-stone-100 px-3 py-1 text-sm font-medium text-stone-800">From {centsToCurrency(service.priceDefault ?? 0)}</span>
                       </div>
                     </div>
                   </div>
@@ -107,7 +107,7 @@ export default async function Home() {
                     <div className="p-6">
                       <div className="flex items-center justify-between">
                         <h3 className="text-xl font-semibold text-stone-900">{service.name}</h3>
-                        <span className="inline-flex items-center rounded-full bg-stone-100 px-3 py-1 text-sm font-medium text-stone-800">{centsToCurrency(service.priceDefault ?? 0)}</span>
+                        <span className="inline-flex items-center rounded-full bg-stone-100 px-3 py-1 text-sm font-medium text-stone-800">From {centsToCurrency(service.priceDefault ?? 0)}</span>
                       </div>
                     </div>
                   </div>
@@ -133,7 +133,7 @@ export default async function Home() {
                     <div className="p-6">
                       <div className="flex items-center justify-between">
                         <h3 className="text-xl font-semibold text-stone-900">{service.name}</h3>
-                        <span className="inline-flex items-center rounded-full bg-stone-100 px-3 py-1 text-sm font-medium text-stone-800">{centsToCurrency(service.priceDefault ?? 0)}</span>
+                        <span className="inline-flex items-center rounded-full bg-stone-100 px-3 py-1 text-sm font-medium text-stone-800">From {centsToCurrency(service.priceDefault ?? 0)}</span>
                       </div>
                     </div>
                   </div>
@@ -158,7 +158,7 @@ export default async function Home() {
               {addOns.map((addon) => (
                 <div key={addon.id} className="flex items-center justify-between py-3">
                   <span className="text-sm font-medium text-stone-800">{addon.name}</span>
-                  <span className="text-sm font-semibold text-stone-600">{centsToCurrency(addon.priceDefault ?? 0)}</span>
+                  <span className="text-sm font-semibold text-stone-600">From {centsToCurrency(addon.priceDefault ?? 0)}</span>
                 </div>
               ))}
             </div>

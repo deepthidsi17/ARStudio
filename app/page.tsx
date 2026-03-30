@@ -26,19 +26,18 @@ export default async function Home() {
   return (
     <div className="space-y-12 pb-12">
       {/* Hero Section */}
-      <section className="relative overflow-hidden rounded-[2rem] bg-stone-900 px-6 py-20 text-center sm:px-12 sm:py-24">
+      <section className="relative overflow-hidden rounded-2xl bg-stone-900 px-6 py-12 text-center sm:px-8 sm:py-16 mx-4 sm:mx-6 lg:mx-8 mt-4">
         <div className="absolute inset-0 opacity-20">
-          <div className="absolute -left-1/4 -top-1/4 h-[150%] w-[150%] animate-[spin_20s_linear_infinite] bg-[conic-gradient(at_center,transparent_40%,#fda4af_80%,transparent)]" />
+          <div className="absolute -left-1/4 -top-1/4 h-[150%] w-[150%] animate-[spin_30s_linear_infinite] bg-[conic-gradient(at_center,transparent_40%,#fda4af_80%,transparent)]" />
         </div>
-        <div className="relative z-10 mx-auto max-w-2xl">
-          <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
+        <div className="relative z-10 mx-auto max-w-3xl">
+          <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
             Elevate your style at AR Studio.
           </h1>
-          <p className="mt-4 text-base leading-7 text-stone-300">
+          <p className="mt-4 text-base leading-6 text-stone-300">
             Expert hair, makeup, and styling services tailored just for you. Book your next appointment today and experience the difference.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
-            {/* The user can update this calendly link! */}
             <a
               href="#"
               className="rounded-full bg-rose-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-500"

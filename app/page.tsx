@@ -2,8 +2,28 @@ import { prisma } from "@/lib/prisma";
 import Image from "next/image";
 import Link from "next/link";
 import { centsToCurrency } from "@/lib/utils";
+import ServiceCard from "@/components/service-card";
 
 export const dynamic = "force-dynamic";
+
+function getServiceDescription(name: string): string {
+  if (name.includes("Everyday Glam") || name.includes("Basic")) {
+    return "Enhance your natural beauty with a fresh, wearable look. Features light to medium coverage for a skin-like finish, neutral eye tones, and a soft lip. Perfect for outings, casual events, daytime functions or photos where you want an effortless, polished glow.";
+  }
+  if (name.includes("Party") || name.includes("Event")) {
+    return "Get camera-ready with a bold, noticeable glam. Expect medium to full coverage with a defined contour, dramatic smokey or colorful eyes, and a long-lasting bold or deep-nude lip. Ideal for parties, receptions, birthdays, and night events.";
+  }
+  if (name.includes("Bridal")) {
+    return "A timeless, elegant, and camera-perfect look designed to last 10–12+ hours. We use high-grade skin prep, seamless full coverage, and waterproof, tear-proof eye looks. Meticulously crafted for HD cameras. Perfect for your wedding ceremonies and main events.";
+  }
+  if (name.includes("Hair")) {
+    return "Complete your look with professional hair styling. From sleek, voluminous blowouts to intricate, elegant updos, we will tailor the style to frame your face perfectly and complement your outfit.";
+  }
+  if (name.includes("Saree")) {
+    return "Experience a flawless, comfortable fit with professional saree styling. From simple traditional draping to full ironing and pre-pleating to save time, we assure you'll look elegant and feel secure throughout your entire event.";
+  }
+  return "Premium styling service tailored perfectly to your individual preferences and event needs.";
+}
 
 export default async function Home() {
   const services = await prisma.service.findMany({
@@ -70,21 +90,10 @@ export default async function Home() {
               <h3 className="mb-6 text-2xl font-semibold text-stone-900">Makeup</h3>
               <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                 {makeupServices.map((service) => (
-                  <div key={service.id} className="group relative overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-sm transition hover:shadow-md">
-                    <div className="aspect-[4/3] w-full overflow-hidden bg-stone-100">
-                      {service.imageUrl ? (
-                        <img src={service.imageUrl} alt={service.name} className="h-full w-full object-cover object-center transition duration-300 group-hover:scale-105" />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-rose-50 text-rose-200"><span className="text-4xl">✦</span></div>
-                      )}
-                    </div>
-                    <div className="p-6">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-xl font-semibold text-stone-900">{service.name}</h3>
-                        <span className="inline-flex items-center rounded-full bg-stone-100 px-3 py-1 text-sm font-medium text-stone-800">From {centsToCurrency(service.priceDefault ?? 0)}</span>
-                      </div>
-                    </div>
-                  </div>
+                  <ServiceCard 
+                    key={service.id} 
+                    service={{ ...service, description: getServiceDescription(service.name) }} 
+                  />
                 ))}
               </div>
             </div>
@@ -96,21 +105,10 @@ export default async function Home() {
               <h3 className="mb-6 text-2xl font-semibold text-stone-900">Hair Styling</h3>
               <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                 {hairServices.map((service) => (
-                  <div key={service.id} className="group relative overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-sm transition hover:shadow-md">
-                    <div className="aspect-[4/3] w-full overflow-hidden bg-stone-100">
-                      {service.imageUrl ? (
-                        <img src={service.imageUrl} alt={service.name} className="h-full w-full object-cover object-center transition duration-300 group-hover:scale-105" />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-rose-50 text-rose-200"><span className="text-4xl">✦</span></div>
-                      )}
-                    </div>
-                    <div className="p-6">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-xl font-semibold text-stone-900">{service.name}</h3>
-                        <span className="inline-flex items-center rounded-full bg-stone-100 px-3 py-1 text-sm font-medium text-stone-800">From {centsToCurrency(service.priceDefault ?? 0)}</span>
-                      </div>
-                    </div>
-                  </div>
+                  <ServiceCard 
+                    key={service.id} 
+                    service={{ ...service, description: getServiceDescription(service.name) }} 
+                  />
                 ))}
               </div>
             </div>
@@ -122,21 +120,10 @@ export default async function Home() {
               <h3 className="mb-6 text-2xl font-semibold text-stone-900">Saree Draping</h3>
               <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                 {sareeServices.map((service) => (
-                  <div key={service.id} className="group relative overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-sm transition hover:shadow-md">
-                    <div className="aspect-[4/3] w-full overflow-hidden bg-stone-100">
-                      {service.imageUrl ? (
-                        <img src={service.imageUrl} alt={service.name} className="h-full w-full object-cover object-center transition duration-300 group-hover:scale-105" />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-rose-50 text-rose-200"><span className="text-4xl">✦</span></div>
-                      )}
-                    </div>
-                    <div className="p-6">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-xl font-semibold text-stone-900">{service.name}</h3>
-                        <span className="inline-flex items-center rounded-full bg-stone-100 px-3 py-1 text-sm font-medium text-stone-800">From {centsToCurrency(service.priceDefault ?? 0)}</span>
-                      </div>
-                    </div>
-                  </div>
+                  <ServiceCard 
+                    key={service.id} 
+                    service={{ ...service, description: getServiceDescription(service.name) }} 
+                  />
                 ))}
               </div>
             </div>

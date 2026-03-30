@@ -156,7 +156,9 @@ export default async function CheckinPage({ searchParams }: CheckinPageProps) {
                           <input type="checkbox" name="serviceIds" value={service.id} className="mt-1 h-6 w-6 accent-rose-500" />
                           <span>
                             <span className="block text-base font-semibold text-stone-900">{service.name}</span>
-                            <span className="block text-sm text-stone-500">Select for this visit</span>
+                            <span className="block text-sm text-stone-500">
+                              {service.priceDefault ? `From ${centsToCurrency(service.priceDefault)}` : "Price set by staff"}
+                            </span>
                           </span>
                         </label>
                       ))}
@@ -256,7 +258,12 @@ export default async function CheckinPage({ searchParams }: CheckinPageProps) {
                         className="flex items-start gap-4 rounded-3xl border border-stone-200 bg-stone-50 px-5 py-4"
                       >
                         <input type="checkbox" name="serviceIds" value={service.id} className="mt-1 h-6 w-6 accent-rose-500" />
-                        <span className="text-base font-medium text-stone-900">{service.name}</span>
+                        <span>
+                          <span className="block text-base font-semibold text-stone-900">{service.name}</span>
+                          <span className="block text-sm text-stone-500">
+                            {service.priceDefault ? `From ${centsToCurrency(service.priceDefault)}` : "Price set by staff"}
+                          </span>
+                        </span>
                       </label>
                     ))}
                   </div>
@@ -304,7 +311,7 @@ export default async function CheckinPage({ searchParams }: CheckinPageProps) {
                   <div className="space-y-1 px-4 py-4">
                     <p className="text-lg font-semibold text-stone-900">{service.name}</p>
                     <p className="text-sm text-stone-500">
-                      {service.priceDefault ? centsToCurrency(service.priceDefault) : "Price set by staff"}
+                      {service.priceDefault ? `From ${centsToCurrency(service.priceDefault)}` : "Price set by staff"}
                     </p>
                   </div>
                 </div>

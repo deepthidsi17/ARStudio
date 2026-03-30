@@ -11,6 +11,12 @@ export default async function Home() {
     orderBy: { name: "asc" }
   });
 
+  const addOnKeywords = ["Travel", "Early Morning"];
+  const isAddOn = (name: string) => addOnKeywords.some((kw) => name.includes(kw));
+
+  const coreServices = services.filter((s) => !isAddOn(s.name));
+  const addOns = services.filter((s) => isAddOn(s.name));
+
   return (
     <div className="space-y-16 pb-16">
       {/* Hero Section */}
@@ -45,7 +51,7 @@ export default async function Home() {
         </div>
         
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {services.map((service) => (
+          {coreServices.map((service) => (
             <div key={service.id} className="group relative overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-sm transition hover:shadow-md">
               <div className="aspect-[4/3] w-full overflow-hidden bg-stone-100">
                 {service.imageUrl ? (
@@ -72,6 +78,28 @@ export default async function Home() {
           ))}
         </div>
       </section>
+
+      {/* Additional Fees Section */}
+      {addOns.length > 0 && (
+        <section className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <div className="rounded-3xl border border-stone-200 bg-white p-8 shadow-sm sm:p-10">
+            <h3 className="mb-4 text-center text-2xl font-bold tracking-tight text-stone-900">
+              Additional Travel & Time Fees
+            </h3>
+            <p className="mx-auto mb-8 max-w-2xl text-center text-stone-600">
+              Services provided outside of standard studio hours or locations will incur these additional base charges.
+            </p>
+            <div className="divide-y divide-stone-100">
+              {addOns.map((addon) => (
+                <div key={addon.id} className="flex items-center justify-between py-4">
+                  <span className="font-medium text-stone-800">{addon.name}</span>
+                  <span className="font-semibold text-stone-600">{centsToCurrency(addon.priceDefault ?? 0)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
       
       {/* Contact & Footer Section */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

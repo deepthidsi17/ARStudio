@@ -78,9 +78,13 @@ export default async function Home() {
         <div className="rounded-3xl bg-rose-50 px-6 py-12 sm:px-12 sm:py-16 text-center">
           <h2 className="text-2xl font-bold tracking-tight text-stone-900">Have questions?</h2>
           <p className="mt-2 text-stone-600">We'd love to hear from you. Get in touch to discuss custom packages or special requests.</p>
-          <div className="mt-6 flex justify-center">
+          <div className="mt-6 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-8">
             <a href="mailto:hello@arglamstudio.com" className="font-semibold text-rose-600 hover:text-rose-500">
               Email Us <span aria-hidden="true">&rarr;</span>
+            </a>
+            <span className="hidden text-stone-300 sm:inline">|</span>
+            <a href="tel:4694698217" className="font-semibold text-rose-600 hover:text-rose-500">
+              Call or Text: (469) 469-8217 <span aria-hidden="true">&rarr;</span>
             </a>
           </div>
         </div>

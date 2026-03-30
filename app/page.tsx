@@ -59,7 +59,9 @@ export default async function Home() {
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
             <a
-              href="#"
+              href="https://calendly.com/deepthidsi17"
+              target="_blank"
+              rel="noopener noreferrer"
               className="rounded-full bg-rose-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-500"
             >
               Book an Appointment

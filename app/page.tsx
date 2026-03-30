@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { centsToCurrency } from "@/lib/utils";
 import { PageHeader, SectionCard } from "@/components/ui";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const [customerCount, visitCount, serviceCount, bookingCount, totalCollected] =
     await Promise.all([

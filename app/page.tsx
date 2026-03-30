@@ -24,26 +24,34 @@ export default async function Home() {
   const addOns = services.filter((s) => isAddOn(s.name));
 
   return (
-    <div className="space-y-16 pb-16">
+    <div className="space-y-12 pb-12">
       {/* Hero Section */}
-      <section className="relative overflow-hidden rounded-[3rem] bg-stone-900 px-6 py-24 text-center sm:px-12 sm:py-32">
+      <section className="relative overflow-hidden rounded-[2rem] bg-stone-900 px-6 py-20 text-center sm:px-12 sm:py-24">
         <div className="absolute inset-0 opacity-20">
           <div className="absolute -left-1/4 -top-1/4 h-[150%] w-[150%] animate-[spin_20s_linear_infinite] bg-[conic-gradient(at_center,transparent_40%,#fda4af_80%,transparent)]" />
         </div>
         <div className="relative z-10 mx-auto max-w-2xl">
-          <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
+          <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
             Elevate your style at AR Studio.
           </h1>
-          <p className="mt-6 text-lg leading-8 text-stone-300">
+          <p className="mt-4 text-base leading-7 text-stone-300">
             Expert hair, makeup, and styling services tailored just for you. Book your next appointment today and experience the difference.
           </p>
-          <div className="mt-10 flex items-center justify-center gap-x-6">
+          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
             {/* The user can update this calendly link! */}
             <a
               href="#"
-              className="rounded-full bg-rose-500 px-8 py-4 text-base font-semibold text-white shadow-sm transition hover:bg-rose-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-500"
+              className="rounded-full bg-rose-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-500"
             >
               Book an Appointment
+            </a>
+            
+            <a href="mailto:hello@arglamstudio.com" className="text-sm font-semibold text-stone-300 hover:text-white transition">
+              hello@arglamstudio.com
+            </a>
+            <span className="hidden text-stone-500 sm:inline">•</span>
+            <a href="tel:4694698217" className="text-sm font-semibold text-stone-300 hover:text-white transition">
+              (469) 469-8217
             </a>
           </div>
         </div>
@@ -51,12 +59,12 @@ export default async function Home() {
 
       {/* Services Section */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-12 text-center">
+        <div className="mb-10 text-center">
           <h2 className="text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">Our Services</h2>
-          <p className="mt-4 text-lg text-stone-600">Transparent pricing for premium results.</p>
+          <p className="mt-3 text-base text-stone-600">Transparent pricing for premium results.</p>
         </div>
         
-        <div className="space-y-16">
+        <div className="space-y-12">
           {/* Makeup Category */}
           {makeupServices.length > 0 && (
             <div>
@@ -140,41 +148,24 @@ export default async function Home() {
       {/* Additional Fees Section */}
       {addOns.length > 0 && (
         <section className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <div className="rounded-3xl border border-stone-200 bg-white p-8 shadow-sm sm:p-10">
-            <h3 className="mb-4 text-center text-2xl font-bold tracking-tight text-stone-900">
+          <div className="rounded-[2rem] border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
+            <h3 className="mb-3 text-center text-xl font-bold tracking-tight text-stone-900">
               Additional Travel & Time Fees
             </h3>
-            <p className="mx-auto mb-8 max-w-2xl text-center text-stone-600">
+            <p className="mx-auto mb-6 max-w-2xl text-center text-sm text-stone-600">
               Services provided outside of standard studio hours or locations will incur these additional base charges.
             </p>
             <div className="divide-y divide-stone-100">
               {addOns.map((addon) => (
-                <div key={addon.id} className="flex items-center justify-between py-4">
-                  <span className="font-medium text-stone-800">{addon.name}</span>
-                  <span className="font-semibold text-stone-600">{centsToCurrency(addon.priceDefault ?? 0)}</span>
+                <div key={addon.id} className="flex items-center justify-between py-3">
+                  <span className="text-sm font-medium text-stone-800">{addon.name}</span>
+                  <span className="text-sm font-semibold text-stone-600">{centsToCurrency(addon.priceDefault ?? 0)}</span>
                 </div>
               ))}
             </div>
           </div>
         </section>
       )}
-      
-      {/* Contact & Footer Section */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="rounded-3xl bg-rose-50 px-6 py-12 sm:px-12 sm:py-16 text-center">
-          <h2 className="text-2xl font-bold tracking-tight text-stone-900">Have questions?</h2>
-          <p className="mt-2 text-stone-600">We'd love to hear from you. Get in touch to discuss custom packages or special requests.</p>
-          <div className="mt-6 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-8">
-            <a href="mailto:hello@arglamstudio.com" className="font-semibold text-rose-600 hover:text-rose-500">
-              Email Us <span aria-hidden="true">&rarr;</span>
-            </a>
-            <span className="hidden text-stone-300 sm:inline">|</span>
-            <a href="tel:4694698217" className="font-semibold text-rose-600 hover:text-rose-500">
-              Call or Text: (469) 469-8217 <span aria-hidden="true">&rarr;</span>
-            </a>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

@@ -11,6 +11,13 @@ AR Glam Studio is a laptop-first salon operations app for customer intake, servi
 - manual payment tracking
 - Calendly sync and booking-to-customer matching
 
+## Architecture & Ecosystem
+
+*   **Website Hosting:** [Vercel](https://vercel.com)
+*   **Domain Registrar:** Square
+*   **Email Provider:** [Zoho Mail](https://www.zoho.com/mail/) (sending from `hello@arglamstudio.com`)
+*   **Development Stack:** VS Code, GitHub, and GitHub Copilot powered by the Gemini 3.1 Pro model.
+
 ## Local run
 
 1. Copy the env template:
@@ -56,18 +63,6 @@ Then use the `Bookings` page to run a sync.
 Webhook endpoint for later:
 
 - `POST /api/calendly/webhook`
-
-## Email Configuration
-
-The application is integrated with **Zoho Mail** for sending automated booking confirmations, modification updates, and cancellation notices directly to the customer and the host.
-
-- **Provider:** Zoho (`smtp.zoho.com`)
-- **From Address:** `hello@arglamstudio.com`
-- **Environment Variables Required:**
-  - `EMAIL_USER` (set to `hello@arglamstudio.com`)
-  - `EMAIL_PASS` (the standalone Zoho App Password)
-
-Ensure these are properly configured in Vercel to allow the Next.js Server Actions to dispatch notifications seamlessly.
 
 ## Main routes
 

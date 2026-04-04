@@ -49,13 +49,11 @@ export default function CategorySection({ id, title, description, services }: Ca
                 onClick={() => setExpandedId(isExpanded ? null : service.id)}
               >
                 {/* Accordion Header */}
-                <div className="flex items-center justify-between p-5 sm:p-6">
-                  <h4 className="text-lg font-semibold text-stone-900">{service.name}</h4>
-                  <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-                    <span className="hidden sm:inline-flex items-center rounded-full bg-stone-100 px-3 py-1 text-sm font-medium text-stone-800">
-                      From {centsToCurrency(service.priceDefault ?? 0)}
-                    </span>
-                    <span className="sm:hidden text-sm font-medium text-stone-800">
+                <div className="flex items-center justify-between gap-2 p-4 sm:p-6">
+                  <h4 className="text-base sm:text-lg font-semibold text-stone-900 leading-tight pr-2">{service.name}</h4>
+                  <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+                    <span className="inline-flex items-center text-sm font-medium text-stone-800 whitespace-nowrap">
+                      <span className="text-stone-500 mr-1 text-xs">From</span>
                       {centsToCurrency(service.priceDefault ?? 0)}
                     </span>
                     <button
@@ -67,15 +65,15 @@ export default function CategorySection({ id, title, description, services }: Ca
                           addItem({ id: service.id, name: service.name, priceDefault: service.priceDefault });
                         }
                       }}
-                      className={`inline-flex items-center justify-center rounded-lg px-3 py-1.5 text-xs font-bold shadow-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
+                      className={`inline-flex items-center justify-center rounded-md px-3 py-1.5 min-w-[70px] text-[11px] sm:text-xs font-bold shadow-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
                         inCart 
                           ? "bg-rose-50 text-rose-700 hover:bg-rose-100 ring-1 ring-inset ring-rose-200" 
                           : "bg-stone-900 text-white hover:bg-stone-800"
                       }`}
                     >
-                      {inCart ? "Added" : "Add to Schedule"}
+                      {inCart ? "Added" : "+ Add"}
                     </button>
-                    <span className="text-stone-400">
+                    <span className="text-stone-400 ml-[-4px] sm:ml-0">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"

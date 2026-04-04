@@ -5,6 +5,7 @@ import { centsToCurrency, displayPhone, formatDateTime, normalizeEmail, normaliz
 import { MessageBanner, PageHeader, SectionCard } from "@/components/ui";
 import { createCustomerVisitAction, createReturningVisitAction } from "@/app/actions";
 import { ValidatedCheckinForm } from "@/components/validated-checkin-form";
+import CheckinServicePicker from "@/components/checkin-service-picker";
 
 type CheckinPageProps = {
   searchParams: Promise<{
@@ -24,6 +25,12 @@ async function lookupCustomer(contact?: string) {
     return null;
   }
 
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+  
+  const endOfDay = new Date(startOfDay);
+  endOfDay.setDate(endOfDay.getDate() + 1);
+
   return prisma.customer.findFirst({
     where: {
       OR: [
@@ -39,26 +46,41 @@ async function lookupCustomer(contact?: string) {
         orderBy: { visitAt: "desc" },
         take: 3,
       },
+      appointments: {
+        where: {
+          status: { in: ["CONFIRMED", "PENDING"] },
+          scheduledAt: { gte: startOfDay, lt: endOfDay },
+        },
+        include: { services: true }
+      }
     },
   });
 }
 
-function servicePlaceholder(name: string) {
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400">
-      <defs>
-        <linearGradient id="bg" x1="0%" x2="100%" y1="0%" y2="100%">
-          <stop offset="0%" stop-color="#fbcfe8" />
-          <stop offset="100%" stop-color="#fed7aa" />
-        </linearGradient>
-      </defs>
-      <rect width="600" height="400" fill="url(#bg)" rx="28" />
-      <circle cx="120" cy="110" r="60" fill="rgba(255,255,255,0.35)" />
-      <circle cx="500" cy="300" r="90" fill="rgba(255,255,255,0.22)" />
-      <text x="50%" y="52%" text-anchor="middle" font-family="Arial, sans-serif" font-size="38" fill="#7c2d12">${name}</text>
-    </svg>
-  `;
-  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+async function lookupAppointmentsForToday(contact?: string) {
+  if (!contact) return [];
+  
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+
+  const endOfDay = new Date(startOfDay);
+  endOfDay.setDate(endOfDay.getDate() + 1);
+
+  return prisma.appointment.findMany({
+    where: {
+      OR: [
+        { email: { equals: contact, mode: "insensitive" } },
+        { phone: { equals: contact } },
+        // Also try matching the normalized phone just in case
+        ...(normalizePhone(contact) ? [{ phone: { contains: normalizePhone(contact)! } }] : []),
+      ],
+      status: { in: ["PENDING", "CONFIRMED"] },
+      scheduledAt: { gte: startOfDay, lt: endOfDay },
+    },
+    include: {
+      services: true,
+    }
+  });
 }
 
 export default async function CheckinPage({ searchParams }: CheckinPageProps) {
@@ -69,6 +91,14 @@ export default async function CheckinPage({ searchParams }: CheckinPageProps) {
     orderBy: { name: "asc" },
   });
   const customer = await lookupCustomer(contact);
+  const standaloneAppointments = await lookupAppointmentsForToday(contact);
+  
+  const allPreselectedIds = [
+    ...(customer?.appointments?.flatMap(appt => appt.services.map(s => s.serviceId)) || []),
+    ...standaloneAppointments.flatMap(appt => appt.services.map(s => s.serviceId))
+  ];
+  const uniquePreselectedIds = Array.from(new Set(allPreselectedIds));
+
   const mode = params.mode === "new" ? "new" : "returning";
 
   return (
@@ -80,7 +110,7 @@ export default async function CheckinPage({ searchParams }: CheckinPageProps) {
       />
       <MessageBanner message={params.message} />
 
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="max-w-4xl mx-auto">
         <div className="space-y-8">
           <div className="grid gap-4 md:grid-cols-2">
             <Link
@@ -147,22 +177,10 @@ export default async function CheckinPage({ searchParams }: CheckinPageProps) {
 
                   <ValidatedCheckinForm action={createReturningVisitAction} className="space-y-5">
                     <input type="hidden" name="customerId" value={customer.id} />
-                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                      {services.map((service) => (
-                        <label
-                          key={service.id}
-                          className="flex items-start gap-4 rounded-3xl border border-stone-200 bg-white px-5 py-4"
-                        >
-                          <input type="checkbox" name="serviceIds" value={service.id} className="mt-1 h-6 w-6 accent-rose-500" />
-                          <span>
-                            <span className="block text-base font-semibold text-stone-900">{service.name}</span>
-                            <span className="block text-sm text-stone-500">
-                              {service.priceDefault ? `From ${centsToCurrency(service.priceDefault)}` : "Price set by staff"}
-                            </span>
-                          </span>
-                        </label>
-                      ))}
-                    </div>
+                    <CheckinServicePicker 
+                      services={services} 
+                      preselectedServiceIds={uniquePreselectedIds}
+                    />
                     <div className="space-y-2">
                       <label className="text-sm font-medium text-stone-700" htmlFor="returning-notes">
                         Notes for today
@@ -197,7 +215,11 @@ export default async function CheckinPage({ searchParams }: CheckinPageProps) {
                 </div>
               ) : contact ? (
                 <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-                  No matching customer yet. Use the new customer form to create one.
+                  {standaloneAppointments.length > 0 ? (
+                    <span><strong>Appointment found!</strong> But they don't have a profile yet. Switch to &quot;New customer&quot; above to check them in.</span>
+                  ) : (
+                    <span>No matching customer yet. Use the new customer form to create one.</span>
+                  )}
                 </div>
               ) : null}
             </SectionCard>
@@ -217,6 +239,7 @@ export default async function CheckinPage({ searchParams }: CheckinPageProps) {
                       id="name"
                       name="name"
                       required
+                      defaultValue={standaloneAppointments[0]?.name || ""}
                       className="w-full rounded-3xl border border-stone-300 px-5 py-4 text-lg"
                       placeholder="Customer name"
                     />
@@ -230,6 +253,7 @@ export default async function CheckinPage({ searchParams }: CheckinPageProps) {
                       name="phone"
                       inputMode="tel"
                       pattern={PHONE_PATTERN}
+                      defaultValue={standaloneAppointments[0]?.phone || contact}
                       className="w-full rounded-3xl border border-stone-300 px-5 py-4 text-lg"
                       placeholder="(555) 555-5555"
                     />
@@ -243,6 +267,7 @@ export default async function CheckinPage({ searchParams }: CheckinPageProps) {
                       id="email"
                       name="email"
                       type="email"
+                      defaultValue={standaloneAppointments[0]?.email || (contact.includes('@') ? contact : "")}
                       className="w-full rounded-3xl border border-stone-300 px-5 py-4 text-lg"
                       placeholder="client@example.com"
                     />
@@ -251,22 +276,7 @@ export default async function CheckinPage({ searchParams }: CheckinPageProps) {
 
                 <div className="space-y-3">
                   <p className="text-sm font-medium text-stone-700">Services wanted</p>
-                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {services.map((service) => (
-                      <label
-                        key={service.id}
-                        className="flex items-start gap-4 rounded-3xl border border-stone-200 bg-stone-50 px-5 py-4"
-                      >
-                        <input type="checkbox" name="serviceIds" value={service.id} className="mt-1 h-6 w-6 accent-rose-500" />
-                        <span>
-                          <span className="block text-base font-semibold text-stone-900">{service.name}</span>
-                          <span className="block text-sm text-stone-500">
-                            {service.priceDefault ? `From ${centsToCurrency(service.priceDefault)}` : "Price set by staff"}
-                          </span>
-                        </span>
-                      </label>
-                    ))}
-                  </div>
+                  <CheckinServicePicker services={services} preselectedServiceIds={uniquePreselectedIds} />
                 </div>
 
                 <div className="space-y-2">
@@ -291,34 +301,6 @@ export default async function CheckinPage({ searchParams }: CheckinPageProps) {
             </SectionCard>
           )}
         </div>
-
-        <aside className="lg:sticky lg:top-6">
-          <SectionCard
-            title="Services and pictures"
-            description="Scrollable gallery for customers to browse what is available today."
-            className="p-5"
-          >
-            <div className="max-h-[72vh] space-y-4 overflow-y-auto pr-2">
-              {services.map((service) => (
-                <div key={service.id} className="overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-sm">
-                  {/* Intentional: supports both admin-provided remote URLs and inline SVG placeholders. */}
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={service.imageUrl || servicePlaceholder(service.name)}
-                    alt={service.name}
-                    className="h-44 w-full object-cover"
-                  />
-                  <div className="space-y-1 px-4 py-4">
-                    <p className="text-lg font-semibold text-stone-900">{service.name}</p>
-                    <p className="text-sm text-stone-500">
-                      {service.priceDefault ? `From ${centsToCurrency(service.priceDefault)}` : "Price set by staff"}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </SectionCard>
-        </aside>
       </div>
     </div>
   );

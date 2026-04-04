@@ -79,8 +79,8 @@ function getServiceDescription(name: string): string {
   if (name === "Back Massage") return "Therapeutic back massage focused on relieving muscle tension, improving blood flow, and restoring comfort.";
 
   // Special Packages
-  if (name === "Party Package") return "Complete party-ready bundle — Makeup + Hair + Saree Draping for $160 (Save $15). Perfect for receptions, birthdays, and celebrations.";
-  if (name === "Bridal Package") return "All-inclusive bridal bundle — Makeup + Hair + Saree Draping for $220 (Save $20).";
+  if (name === "Party Package") return "Complete party-ready bundle — Makeup + Hair + Saree Draping. Perfect for receptions, birthdays, and celebrations.";
+  if (name === "Bridal Package") return "All-inclusive bridal bundle — Makeup + Hair + Saree Draping.";
 
   // Travel & Add-ons
   if (name.includes("Travel")) return "Distance-based travel fee for on-location services. Final fee confirmed before booking.";

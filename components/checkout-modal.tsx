@@ -130,8 +130,8 @@ export function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
                 <strong>Phone:</strong> (469) 469-8217<br /><br />
                 <strong>Address:</strong><br />
                 AR Glam Studio<br />
-                North Dallas Area<br />
-                Texas, United States<br />
+                800 Walworth Drive<br />
+                Prosper, TX<br />
               </p>
               <p className="text-sm text-stone-500 bg-white p-3 rounded-xl border border-stone-100">
                 Please try to arrive 5 minutes early to your appointment. See you soon!

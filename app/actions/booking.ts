@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { sendNewBookingEmail } from "@/lib/email";
 
 export async function getAvailableTimeSlots(dateStr: string, requiredDurationMins: number = 60) {
   try {
@@ -129,8 +130,12 @@ export async function createBooking(data: {
             priceCents: svc.priceDefault,
           }))
         }
-      }
+      },
+      include: { services: true }
     });
+
+    // Dispatch emails asynchronously so it doesn't block the UI
+    sendNewBookingEmail(appointment).catch(console.error);
 
     return { success: true, appointmentId: appointment.id };
   } catch (error: any) {

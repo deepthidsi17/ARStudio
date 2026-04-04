@@ -49,7 +49,7 @@ export async function sendNewBookingEmail(appointment: any) {
     <p><strong>Services:</strong></p>
     <ul>${serviceList}</ul>
     <p><strong>Location:</strong> 800 Walworth Drive, Prosper, TX</p>
-    <p>If you need to change your appointment, please contact us at (469) 469-8217.</p>
+    <p>If you need to change your appointment, please contact us at (469) 469-8217, or manage your bookings online at <a href="${BASE_URL}/my-bookings">${BASE_URL}/my-bookings</a>.</p>
     <p>Thank you,<br/>AR Glam Studio</p>
   `;
 
@@ -84,6 +84,7 @@ export async function sendBookingModifiedEmail(appointment: any, oldTime: Date, 
     <p><strong>New Time:</strong> ${newTimeString}</p>
     <p><strong>Services:</strong></p>
     <ul>${serviceList}</ul>
+    <p>If you need to change your appointment, please contact us at (469) 469-8217, or manage your bookings online at <a href="${BASE_URL}/my-bookings">${BASE_URL}/my-bookings</a>.</p>
     <p>Looking forward to seeing you!<br/>AR Glam Studio</p>
   `;
 
@@ -108,7 +109,7 @@ export async function sendBookingCancelledEmail(appointment: any) {
     <h2>Booking Cancelled</h2>
     <p>Hi ${appointment.name},</p>
     <p>Your appointment scheduled for <strong>${timeString}</strong> has been cancelled by the studio.</p>
-    <p>If you have any questions or would like to reschedule, please give us a call at (469) 469-8217.</p>
+    <p>If you have any questions or would like to reschedule, please give us a call at (469) 469-8217, or review your bookings online at <a href="${BASE_URL}/my-bookings">${BASE_URL}/my-bookings</a>.</p>
     <p>Thank you,<br/>AR Glam Studio</p>
   `;
 

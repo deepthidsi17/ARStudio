@@ -250,7 +250,7 @@ export default async function Home() {
       {/* Detailed Services Section (Left Image, Right Accordions) */}
       <section id="services" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="mb-10 text-center">
-          <h2 className="text-3xl font-medium tracking-tight text-stone-900 sm:text-4xl text-balance">Curated Menu</h2>
+          <h2 className="text-3xl font-medium tracking-tight text-stone-900 sm:text-4xl text-balance">Curated Services</h2>
           <p className="mt-4 text-base text-stone-500">Transparent pricing. Premium results. Detailed breakdown below.</p>
         </div>
         

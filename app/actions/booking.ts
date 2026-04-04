@@ -134,8 +134,8 @@ export async function createBooking(data: {
       include: { services: true }
     });
 
-    // Dispatch emails asynchronously so it doesn't block the UI
-    sendNewBookingEmail(appointment).catch(console.error);
+    // We must await so Vercel does not terminate the Serverless Function before the email sends
+    await sendNewBookingEmail(appointment).catch(console.error);
 
     return { success: true, appointmentId: appointment.id };
   } catch (error: any) {

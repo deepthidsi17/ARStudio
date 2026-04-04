@@ -26,7 +26,7 @@ export async function updateAppointmentTime(id: string, newStartStr: string, new
   revalidatePath("/admin/bookings");
 
   if (existing.scheduledAt.getTime() !== updatedStart.getTime()) {
-    sendBookingModifiedEmail(existing, existing.scheduledAt, updatedStart).catch(console.error);
+    await sendBookingModifiedEmail(existing, existing.scheduledAt, updatedStart).catch(console.error);
   }
 }
 
@@ -41,5 +41,5 @@ export async function cancelAppointmentAdmin(id: string) {
 
   revalidatePath("/admin/bookings");
 
-  sendBookingCancelledEmail(appointment).catch(console.error);
+  await sendBookingCancelledEmail(appointment).catch(console.error);
 }

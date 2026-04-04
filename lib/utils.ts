@@ -58,8 +58,7 @@ export function formatDateTime(value: Date | string | null | undefined): string 
 
 export function visitSourceLabel(source: VisitSource): string {
   switch (source) {
-    case VisitSource.CALENDLY:
-      return "Calendly";
+
     case VisitSource.STAFF:
       return "Staff";
     case VisitSource.IPAD:

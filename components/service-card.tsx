@@ -54,9 +54,15 @@ export default function ServiceCard({ service }: { service: ServiceProps }) {
           className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${isExpanded ? 'grid-rows-[1fr] mt-4' : 'grid-rows-[0fr]'}`}
         >
           <div className="overflow-hidden">
-            <p className="text-sm leading-relaxed text-stone-600">
+            <p className="text-sm leading-relaxed text-stone-600 mb-4">
               {service.description}
             </p>
+            <a
+              href="#services"
+              className="inline-flex w-full items-center justify-center rounded-xl bg-stone-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-stone-800 transition-colors"
+            >
+              Book now
+            </a>
           </div>
         </div>
       </div>

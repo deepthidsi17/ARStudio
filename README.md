@@ -1,6 +1,6 @@
-# AR Studio
+# AR Glam Studio
 
-AR Studio is a laptop-first salon operations app for customer intake, service tracking, manual payment logging, and Calendly booking sync.
+AR Glam Studio is a laptop-first salon operations app for customer intake, service tracking, manual payment logging, and Calendly booking sync.
 
 ## What it includes
 

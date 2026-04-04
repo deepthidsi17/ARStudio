@@ -4,7 +4,6 @@ import { VisitSource } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { syncCalendlyEvents } from "@/lib/calendly";
 import { prisma } from "@/lib/prisma";
 import { dollarsToCents, isValidPhoneNumber, normalizeEmail, normalizePhone } from "@/lib/utils";
 
@@ -286,81 +285,4 @@ export async function deleteCustomerAction(formData: FormData) {
   revalidatePath("/bookings");
   revalidatePath("/checkin");
   redirect("/customers?message=Customer deleted.");
-}
-
-export async function syncCalendlyAction() {
-  try {
-    await syncCalendlyEvents();
-    revalidatePath("/bookings");
-    revalidatePath("/customers");
-    redirect("/bookings?message=Calendly sync completed.");
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Calendly sync failed.";
-    redirect(`/bookings?message=${encodeURIComponent(message)}`);
-  }
-}
-
-export async function matchCalendlyBookingAction(formData: FormData) {
-  const bookingId = String(formData.get("bookingId") ?? "");
-  const customerId = String(formData.get("customerId") ?? "");
-
-  if (!bookingId || !customerId) {
-    redirect("/bookings?message=Choose a booking and customer.");
-  }
-
-  await prisma.calendlyEvent.update({
-    where: { id: bookingId },
-    data: { matchedCustomerId: customerId },
-  });
-
-  revalidatePath("/bookings");
-  revalidatePath("/customers");
-  redirect("/bookings?message=Booking linked to customer.");
-}
-
-export async function createCustomerFromBookingAction(formData: FormData) {
-  const bookingId = String(formData.get("bookingId") ?? "");
-  if (!bookingId) {
-    redirect("/bookings?message=Missing booking.");
-  }
-
-  const booking = await prisma.calendlyEvent.findUnique({
-    where: { id: bookingId },
-  });
-
-  if (!booking) {
-    redirect("/bookings?message=Booking not found.");
-  }
-
-  const normalizedPhone = normalizePhone(booking.inviteePhone);
-  const normalizedEmail = normalizeEmail(booking.inviteeEmail);
-
-  let customer =
-    (normalizedPhone
-      ? await prisma.customer.findUnique({ where: { normalizedPhone } })
-      : null) ??
-    (normalizedEmail
-      ? await prisma.customer.findUnique({ where: { normalizedEmail } })
-      : null);
-
-  if (!customer) {
-    customer = await prisma.customer.create({
-      data: {
-        name: booking.inviteeName || "Calendly Client",
-        phone: booking.inviteePhone,
-        normalizedPhone,
-        email: booking.inviteeEmail,
-        normalizedEmail,
-      },
-    });
-  }
-
-  await prisma.calendlyEvent.update({
-    where: { id: booking.id },
-    data: { matchedCustomerId: customer.id },
-  });
-
-  revalidatePath("/bookings");
-  revalidatePath("/customers");
-  redirect("/bookings?message=Customer created from booking.");
 }

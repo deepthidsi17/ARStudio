@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Link from "next/link";
-
-import { AppNavLink } from "@/components/ui";
+import Image from "next/image";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -16,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AR Studio",
-  description: "Customer, service, booking, and payment tracking for AR Studio.",
+  title: "AR Glam Studio",
+  description: "Customer, service, booking, and payment tracking for AR Glam Studio.",
 };
 
 export default function RootLayout({
@@ -30,23 +28,29 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} bg-stone-100 text-stone-900 antialiased`}
       >
-        <div className="min-h-screen">
-          <header className="border-b border-stone-200 bg-white/90 backdrop-blur">
-            <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8">
-              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                <div>
-                  <Link href="/" className="text-2xl font-semibold tracking-tight text-stone-900">
-                    AR Studio
-                  </Link>
-                </div>
-                <nav className="flex flex-wrap gap-2">
-                  <AppNavLink href="/">Home</AppNavLink>
-                  {/* Hide internal links from public visitors */}
-                </nav>
-              </div>
+        <div className="min-h-screen flex flex-col">
+          <header className="w-full bg-white border-b border-stone-200">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-between py-4">
+              <a href="/" className="flex items-center">
+                <Image
+                  src="/ar-glam-studio-logo.svg"
+                  alt="AR Glam Studio logo"
+                  width={460}
+                  height={90}
+                  className="h-14 w-auto sm:h-20 lg:h-24"
+                  priority
+                />
+              </a>
+              <nav className="flex items-center gap-6">
+                <a href="/my-bookings" className="text-sm font-medium text-stone-600 hover:text-stone-900 transition-colors">
+                  Manage Bookings
+                </a>
+              </nav>
             </div>
           </header>
-          <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">{children}</main>
+          <main className="flex-1 mx-auto max-w-7xl w-full px-4 py-8 sm:px-6 lg:px-8">
+            {children}
+          </main>
         </div>
       </body>
     </html>

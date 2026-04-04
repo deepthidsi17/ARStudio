@@ -17,10 +17,10 @@ export default async function CustomerDetailPage({ params, searchParams }: Custo
     where: { id },
     include: {
       visits: {
-        include: { visitServices: true, calendlyEvent: true },
+        include: { visitServices: true },
         orderBy: { visitAt: "desc" },
       },
-      calendlyEvents: {
+      appointments: {
         orderBy: { scheduledAt: "desc" },
         take: 10,
       },
@@ -146,18 +146,18 @@ export default async function CustomerDetailPage({ params, searchParams }: Custo
         </SectionCard>
       </div>
 
-      <SectionCard title="Calendly bookings" description="Recent bookings that were matched to this customer.">
+      <SectionCard title="Appointments" description="Recent native appointments scheduled by this customer.">
         <div className="space-y-3">
-          {customer.calendlyEvents.map((event) => (
-            <div key={event.id} className="rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-600">
-              <p className="font-semibold text-stone-900">{event.eventName || "Calendly booking"}</p>
-              <p>{formatDateTime(event.scheduledAt)}</p>
-              <p>Status: {event.status}</p>
+          {customer.appointments.map((appt) => (
+            <div key={appt.id} className="rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-600">
+              <p className="font-semibold text-stone-900">{appt.name || "Appointment"}</p>
+              <p>{formatDateTime(appt.scheduledAt)}</p>
+              <p>Status: {appt.status}</p>
             </div>
           ))}
-          {!customer.calendlyEvents.length ? (
+          {!customer.appointments.length ? (
             <div className="rounded-2xl border border-dashed border-stone-300 p-6 text-sm text-stone-500">
-              No matched bookings yet.
+              No recent appointments.
             </div>
           ) : null}
         </div>

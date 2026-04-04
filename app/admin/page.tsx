@@ -10,7 +10,7 @@ export default async function Home() {
       prisma.customer.count(),
       prisma.visit.count(),
       prisma.service.count({ where: { active: true } }),
-      prisma.calendlyEvent.count(),
+      prisma.appointment.count(),
       prisma.visit.aggregate({ _sum: { amountPaidCents: true } }),
     ]);
 
@@ -18,7 +18,7 @@ export default async function Home() {
     { label: "Customers", value: customerCount.toString() },
     { label: "Visits", value: visitCount.toString() },
     { label: "Active services", value: serviceCount.toString() },
-    { label: "Calendly bookings", value: bookingCount.toString() },
+    { label: "Appointments", value: bookingCount.toString() },
     {
       label: "Recorded payments",
       value: centsToCurrency(totalCollected._sum.amountPaidCents ?? 0),
@@ -28,7 +28,7 @@ export default async function Home() {
   return (
     <div className="space-y-8">
       <PageHeader
-        eyebrow="AR Studio"
+        eyebrow="AR Glam Studio"
         title="Client intake and bookings"
         description="Keep client intake simple, review upcoming bookings, and keep salon operations organized in one place."
         action={
@@ -60,8 +60,8 @@ export default async function Home() {
           </Link>
         </SectionCard>
         <SectionCard
-          title="Calendly booking sync"
-          description="Pull appointments into the app and match them to customer records by phone or email."
+          title="Appointments & Bookings"
+          description="View all incoming online appointments from the website and manage their statuses."
         >
           <Link href="/admin/bookings" className="text-sm font-semibold text-rose-600">
             Review bookings

@@ -13,6 +13,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <nav className="flex flex-wrap gap-2 rounded-xl bg-stone-800 p-1">
             <AppNavLink href="/admin">Overview</AppNavLink>
             <AppNavLink href="/admin/bookings">Bookings</AppNavLink>
+            <AppNavLink href="/admin/schedule">Schedule</AppNavLink>
             <AppNavLink href="/admin/staff">Staff Tools</AppNavLink>
           </nav>
         </div>

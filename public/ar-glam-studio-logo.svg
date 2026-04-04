@@ -1,0 +1,21 @@
+<svg width="920" height="180" viewBox="0 0 920 180" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">AR Glam Studio Logo</title>
+  <desc id="desc">Monogram logo for AR Glam Studio</desc>
+  <defs>
+    <linearGradient id="ring" x1="20" y1="20" x2="160" y2="160" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F9E9E1"/>
+      <stop offset="1" stop-color="#F3D8C9"/>
+    </linearGradient>
+  </defs>
+  <rect width="920" height="180" fill="transparent"/>
+  <g transform="translate(20 20)">
+    <circle cx="70" cy="70" r="66" fill="white" stroke="url(#ring)" stroke-width="8"/>
+    <path d="M42 104L69.5 36L97 104" stroke="#1C1917" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M52 84H87" stroke="#1C1917" stroke-width="8" stroke-linecap="round"/>
+    <path d="M107 104V36H128C146 36 157 45 157 60C157 72 149 80 136 82L160 104" stroke="#1C1917" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g transform="translate(210 36)">
+    <text x="0" y="56" fill="#1C1917" font-size="54" font-family="Georgia, Times New Roman, serif" font-weight="700" letter-spacing="0.4">AR Glam Studio</text>
+    <text x="2" y="96" fill="#57534E" font-size="20" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif" letter-spacing="2.8">BEAUTY AND BRIDAL SERVICES</text>
+  </g>
+</svg>

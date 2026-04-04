@@ -13,7 +13,6 @@ datasource db {
 enum VisitSource {
   IPAD
   STAFF
-  CALENDLY
 }
 
 model Customer {
@@ -27,20 +26,21 @@ model Customer {
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
   visits          Visit[]
-  calendlyEvents  CalendlyEvent[]
+  appointments    Appointment[]
 
   @@index([name])
 }
 
 model Service {
-  id            String         @id @default(cuid())
-  name          String
-  priceDefault  Int?
-  imageUrl      String?
-  active        Boolean        @default(true)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  visitServices VisitService[]
+  id                  String               @id @default(cuid())
+  name                String
+  priceDefault        Int?
+  imageUrl            String?
+  active              Boolean              @default(true)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  visitServices       VisitService[]
+  appointmentServices AppointmentService[]
 
   @@unique([name])
 }
@@ -48,7 +48,6 @@ model Service {
 model Visit {
   id               String         @id @default(cuid())
   customerId       String
-  calendlyEventId  String?
   visitAt          DateTime       @default(now())
   amountPaidCents  Int?
   paymentMethod    String?
@@ -57,7 +56,6 @@ model Visit {
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   customer         Customer       @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  calendlyEvent    CalendlyEvent? @relation(fields: [calendlyEventId], references: [id], onDelete: SetNull)
   visitServices    VisitService[]
 
   @@index([customerId, visitAt])
@@ -77,26 +75,55 @@ model VisitService {
   @@index([serviceId])
 }
 
-model CalendlyEvent {
-  id                     String    @id @default(cuid())
-  calendlyEventUri       String?   @unique
-  calendlyInviteeUri     String?   @unique
-  eventName              String?
-  inviteeName            String?
-  inviteeEmail           String?
-  normalizedInviteeEmail String?
-  inviteePhone           String?
-  normalizedInviteePhone String?
-  scheduledAt            DateTime?
-  status                 String
-  rawPayload             String?
-  matchedCustomerId      String?
-  createdAt              DateTime  @default(now())
-  updatedAt              DateTime  @updatedAt
-  matchedCustomer        Customer? @relation(fields: [matchedCustomerId], references: [id], onDelete: SetNull)
-  visits                 Visit[]
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  NO_SHOW
+  COMPLETED
+}
+
+model Appointment {
+  id               String               @id @default(cuid())
+  customerId       String?              
+  name             String
+  email            String
+  phone            String
+  scheduledAt      DateTime
+  status           AppointmentStatus    @default(PENDING)
+  totalPriceCents  Int?
+  notes            String?
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  
+  customer         Customer?            @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  services         AppointmentService[]
 
   @@index([scheduledAt])
-  @@index([normalizedInviteeEmail])
-  @@index([normalizedInviteePhone])
+}
+
+model AppointmentService {
+  id            String      @id @default(cuid())
+  appointmentId String
+  serviceId     String
+  serviceName   String
+  priceCents    Int?
+  createdAt     DateTime    @default(now())
+  
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  service       Service     @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+
+  @@index([appointmentId])
+  @@index([serviceId])
+}
+
+model ScheduleRule {
+  id          String   @id @default(cuid())
+  date        String   @unique
+  startTime   String   
+  endTime     String   
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

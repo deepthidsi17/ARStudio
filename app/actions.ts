@@ -47,8 +47,8 @@ export async function createCustomerVisitAction(formData: FormData) {
   const notes = String(formData.get("notes") ?? "").trim();
   const serviceIds = parseServiceIds(formData);
 
-  if (!name) {
-    checkinRedirect("Please enter the customer name.");
+  if (!name || name.length < 4) {
+    checkinRedirect("Please enter a valid, full customer name.");
   }
 
   if (!phone && !email) {
@@ -57,6 +57,11 @@ export async function createCustomerVisitAction(formData: FormData) {
 
   if (phone && !isValidPhoneNumber(phone)) {
     checkinRedirect("Please enter a valid 10-digit phone number.");
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (email && !emailRegex.test(email)) {
+    checkinRedirect("Please enter a valid email address.");
   }
 
   if (!serviceIds.length) {

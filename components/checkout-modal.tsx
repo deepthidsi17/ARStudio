@@ -13,7 +13,8 @@ export function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    contactInfo: "",
+    phone: "",
+    email: "",
     scheduledAt: "",
   });
 
@@ -40,6 +41,28 @@ export function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (formData.firstName.trim().length < 3) {
+      alert("Please provide a valid first name (at least 3 characters).");
+      return;
+    }
+    
+    if (formData.lastName.trim().length < 2) {
+      alert("Please provide a valid last name.");
+      return;
+    }
+
+    const phoneDigits = formData.phone.replace(/\D/g, '');
+    if (phoneDigits.length < 10) {
+      alert("Please provide a valid 10-digit phone number.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email.trim())) {
+      alert("Please provide a valid email address.");
+      return;
+    }
+
     if (!formData.scheduledAt) {
       alert("Please select a time slot.");
       return;
@@ -51,8 +74,8 @@ export function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
       const res = await createBooking({
         firstName: formData.firstName,
         lastName: formData.lastName,
-        email: formData.contactInfo,
-        phone: formData.contactInfo,
+        email: formData.email,
+        phone: formData.phone,
         scheduledAt: formData.scheduledAt,
         totalPriceCents: total,
         services: items.map(i => ({ id: i.id, name: i.name, priceDefault: i.priceDefault }))
@@ -65,7 +88,7 @@ export function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
           clearCart();
           onClose();
           setIsSuccess(false);
-          setFormData({ firstName: "", lastName: "", contactInfo: "", scheduledAt: "" });
+          setFormData({ firstName: "", lastName: "", phone: "", email: "", scheduledAt: "" });
           setSelectedDate("");
         }, 8000);
       } else {
@@ -174,17 +197,22 @@ export function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-stone-700 mb-1">First Name</label>
-                    <input required name="firstName" value={formData.firstName} onChange={handleChange} type="text" className="w-full rounded-xl border-stone-300 shadow-sm focus:border-stone-900 focus:ring-stone-900 sm:text-sm" />
+                    <input required name="firstName" value={formData.firstName} onChange={handleChange} type="text" minLength={3} className="w-full rounded-xl border-stone-300 shadow-sm focus:border-stone-900 focus:ring-stone-900 sm:text-sm" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-stone-700 mb-1">Last Name</label>
-                    <input required name="lastName" value={formData.lastName} onChange={handleChange} type="text" className="w-full rounded-xl border-stone-300 shadow-sm focus:border-stone-900 focus:ring-stone-900 sm:text-sm" />
+                    <input required name="lastName" value={formData.lastName} onChange={handleChange} type="text" minLength={2} className="w-full rounded-xl border-stone-300 shadow-sm focus:border-stone-900 focus:ring-stone-900 sm:text-sm" />
                   </div>
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-stone-700 mb-1">Phone or Email</label>
-                  <input required name="contactInfo" value={formData.contactInfo} onChange={handleChange} type="text" className="w-full rounded-xl border-stone-300 shadow-sm focus:border-stone-900 focus:ring-stone-900 sm:text-sm" placeholder="e.g. 555-1234 or email@example.com" />
+                  <label className="block text-sm font-medium text-stone-700 mb-1">Phone Number</label>
+                  <input required name="phone" value={formData.phone} onChange={handleChange} type="tel" className="w-full rounded-xl border-stone-300 shadow-sm focus:border-stone-900 focus:ring-stone-900 sm:text-sm" placeholder="e.g. 555-1234" />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-stone-700 mb-1">Email Address</label>
+                  <input required name="email" value={formData.email} onChange={handleChange} type="email" className="w-full rounded-xl border-stone-300 shadow-sm focus:border-stone-900 focus:ring-stone-900 sm:text-sm" placeholder="e.g. client@example.com" />
                 </div>
 
                 <div>

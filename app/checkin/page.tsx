@@ -239,6 +239,7 @@ export default async function CheckinPage({ searchParams }: CheckinPageProps) {
                       id="name"
                       name="name"
                       required
+                      minLength={4}
                       defaultValue={standaloneAppointments[0]?.name || ""}
                       className="w-full rounded-3xl border border-stone-300 px-5 py-4 text-lg"
                       placeholder="Customer name"

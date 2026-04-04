@@ -1,7 +1,7 @@
 import { PageHeader, SectionCard } from "@/components/ui";
 import { prisma } from "@/lib/prisma";
 import { displayPhone, formatDateTime, centsToCurrency } from "@/lib/utils";
-import EditBookingTime from "./edit-booking-time";
+import EditBookingAdmin from "./edit-booking-admin";
 import { cancelAppointmentAdmin } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -10,6 +10,11 @@ export default async function AppointmentsPage() {
   const appointments = await prisma.appointment.findMany({
     include: { services: true },
     orderBy: { scheduledAt: "asc" },
+  });
+
+  const allServices = await prisma.service.findMany({
+    where: { active: true },
+    orderBy: { name: 'asc' }
   });
 
   const upcoming = appointments.filter(a => a.status === "PENDING" || a.status === "CONFIRMED");
@@ -40,45 +45,21 @@ export default async function AppointmentsPage() {
                   </span>
                 </div>
                 <div className="pt-2">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-0">
-                    <p className="text-sm font-bold text-rose-600">
-                      {formatDateTime(appt.scheduledAt)}
-                      {appt.endTime && (
-                        <span className="text-stone-500 font-normal ml-1">
-                          to {appt.endTime.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
-                        </span>
-                      )}
-                    </p>
-                    <EditBookingTime id={appt.id} currentDateTime={appt.scheduledAt} currentEndTime={appt.endTime} isPast={false} />
-                  </div>
+                  <EditBookingAdmin appt={appt} allServices={allServices} />
                 </div>
-                <div className="mt-4 pt-4 border-t border-stone-200">
-                  <ul className="text-sm text-stone-600 space-y-1 mb-2">
-                    {appt.services.map(s => (
-                      <li key={s.id} className="flex justify-between">
-                        <span>{s.serviceName}</span>
-                        <span>{centsToCurrency(s.priceCents || 0)}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="flex justify-between font-bold text-stone-900 text-sm mb-4">
-                    <span>Total:</span>
-                    <span>{centsToCurrency(appt.totalPriceCents || 0)}</span>
-                  </div>
-                  
-                  <div className="flex justify-end border-t border-stone-200 pt-3">
-                    <form action={async () => {
-                      "use server"
-                      await cancelAppointmentAdmin(appt.id)
-                    }}>
-                      <button 
-                        className="text-xs font-semibold text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 transition-colors px-3 py-1.5 rounded-full"
-                        type="submit"
-                      >
-                        Cancel Booking
-                      </button>
-                    </form>
-                  </div>
+                
+                <div className="flex justify-end pt-3">
+                  <form action={async () => {
+                    "use server"
+                    await cancelAppointmentAdmin(appt.id)
+                  }}>
+                    <button 
+                      className="text-xs font-semibold text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 transition-colors px-3 py-1.5 rounded-full"
+                      type="submit"
+                    >
+                      Cancel Booking
+                    </button>
+                  </form>
                 </div>
               </div>
             ))}

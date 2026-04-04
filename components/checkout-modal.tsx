@@ -60,11 +60,14 @@ export function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
       
       if (res?.success) {
         setIsSuccess(true);
+        // Changed timeout from 3000 to longer to allow users to read confirmation/address
         setTimeout(() => {
           clearCart();
           onClose();
           setIsSuccess(false);
-        }, 3000);
+          setFormData({ firstName: "", lastName: "", contactInfo: "", scheduledAt: "" });
+          setSelectedDate("");
+        }, 8000);
       } else {
         alert("Failed to confirm booking: " + (res?.error || "Unknown error"));
       }
@@ -106,14 +109,44 @@ export function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
         </button>
 
         {isSuccess ? (
-          <div className="p-10 text-center">
+          <div className="p-8 sm:p-10 text-center">
             <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
               <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h3 className="text-2xl font-bold text-stone-900">Booking Confirmed!</h3>
-            <p className="mt-2 text-stone-500">We've added your native appointment to the schedule.</p>
+            <h3 className="text-2xl font-bold text-stone-900 mb-2">Booking Confirmed!</h3>
+            <p className="text-stone-500 mb-6">A confirmation email has been sent with your booking details.</p>
+            
+            <div className="bg-stone-50 border border-stone-200 rounded-2xl p-6 text-left">
+              <h4 className="font-semibold tracking-wide text-stone-900 flex items-center gap-2 mb-2">
+                <svg className="h-5 w-5 text-stone-500" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                </svg>
+                Location & Details
+              </h4>
+              <p className="text-sm text-stone-600 leading-relaxed mb-4">
+                <strong>Address:</strong><br />
+                AR Glam Studio<br />
+                123 Make Believe Road<br />
+                North Dallas, TX 75001<br />
+              </p>
+              <p className="text-sm text-stone-500 bg-white p-3 rounded-xl border border-stone-100">
+                Please try to arrive 5 minutes early to your appointment. See you soon!
+              </p>
+            </div>
+
+            <button 
+              onClick={() => {
+                clearCart();
+                onClose();
+                setIsSuccess(false);
+              }} 
+              className="mt-8 bg-stone-900 text-white px-8 py-3 rounded-full font-medium hover:bg-stone-800 transition"
+            >
+              Done
+            </button>
           </div>
         ) : (
           <>

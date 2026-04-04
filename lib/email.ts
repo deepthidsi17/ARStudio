@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import { formatDateTime } from "./utils";
+import { formatDateTime, centsToCurrency } from "./utils";
 
 // Make sure to add EMAIL_USER and EMAIL_PASS to your .env file
 const transporter = nodemailer.createTransport({
@@ -38,7 +38,8 @@ async function sendEmail(to: string | string[], subject: string, html: string) {
 
 export async function sendNewBookingEmail(appointment: any) {
   const timeString = formatDateTime(appointment.scheduledAt);
-  const serviceList = appointment.services.map((s: any) => `<li>${s.serviceName}</li>`).join("");
+  const serviceList = appointment.services.map((s: any) => `<li>${s.serviceName} - ${centsToCurrency(s.priceCents || 0)}</li>`).join("");
+  const totalCost = centsToCurrency(appointment.totalPriceCents || 0);
 
   const customerHtml = `
     <div style="text-align: center;">${LOGO_IMG}</div>
@@ -46,8 +47,10 @@ export async function sendNewBookingEmail(appointment: any) {
     <p>Hi ${appointment.name},</p>
     <p>Your appointment at AR Glam Studio has been successfully booked.</p>
     <p><strong>When:</strong> ${timeString}</p>
-    <p><strong>Services:</strong></p>
+    <p><strong>Services Booked:</strong></p>
     <ul>${serviceList}</ul>
+    <p><strong>Total Estimated Cost:</strong> ${totalCost}</p>
+    <br/>
     <p><strong>Location:</strong> 800 Walworth Drive, Prosper, TX</p>
     <p>If you need to change your appointment, please contact us at (469) 469-8217, or manage your bookings online at <a href="${BASE_URL}/my-bookings">${BASE_URL}/my-bookings</a>.</p>
     <p>Thank you,<br/>AR Glam Studio</p>
@@ -62,6 +65,7 @@ export async function sendNewBookingEmail(appointment: any) {
     <p><strong>When:</strong> ${timeString}</p>
     <p><strong>Services:</strong></p>
     <ul>${serviceList}</ul>
+    <p><strong>Total Value:</strong> ${totalCost}</p>
   `;
 
   // Send to Customer
@@ -73,7 +77,8 @@ export async function sendNewBookingEmail(appointment: any) {
 export async function sendBookingModifiedEmail(appointment: any, oldTime: Date, newTime: Date) {
   const oldTimeString = formatDateTime(oldTime);
   const newTimeString = formatDateTime(newTime);
-  const serviceList = appointment.services.map((s: any) => `<li>${s.serviceName}</li>`).join("");
+  const serviceList = appointment.services.map((s: any) => `<li>${s.serviceName} - ${centsToCurrency(s.priceCents || 0)}</li>`).join("");
+  const totalCost = centsToCurrency(appointment.totalPriceCents || 0);
 
   const customerHtml = `
     <div style="text-align: center;">${LOGO_IMG}</div>
@@ -84,6 +89,8 @@ export async function sendBookingModifiedEmail(appointment: any, oldTime: Date, 
     <p><strong>New Time:</strong> ${newTimeString}</p>
     <p><strong>Services:</strong></p>
     <ul>${serviceList}</ul>
+    <p><strong>Estimated Total:</strong> ${totalCost}</p>
+    <br/>
     <p>If you need to change your appointment, please contact us at (469) 469-8217, or manage your bookings online at <a href="${BASE_URL}/my-bookings">${BASE_URL}/my-bookings</a>.</p>
     <p>Looking forward to seeing you!<br/>AR Glam Studio</p>
   `;
@@ -98,6 +105,10 @@ export async function sendBookingModifiedEmail(appointment: any, oldTime: Date, 
     <p>${appointment.name}'s appointment has been manually moved.</p>
     <p><strong>From:</strong> ${oldTimeString}</p>
     <p><strong>To:</strong> ${newTimeString}</p>
+    <br/>
+    <p><strong>Updated Services:</strong></p>
+    <ul>${serviceList}</ul>
+    <p><strong>New Total Value:</strong> ${totalCost}</p>
   `);
 }
 

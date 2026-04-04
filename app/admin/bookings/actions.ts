@@ -13,3 +13,14 @@ export async function updateAppointmentTime(id: string, newDateTimeStr: string) 
 
   revalidatePath("/admin/bookings");
 }
+
+export async function cancelAppointmentAdmin(id: string) {
+  await prisma.appointment.update({
+    where: { id },
+    data: {
+      status: "CANCELLED"
+    }
+  });
+
+  revalidatePath("/admin/bookings");
+}

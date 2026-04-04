@@ -2,6 +2,7 @@ import { PageHeader, SectionCard } from "@/components/ui";
 import { prisma } from "@/lib/prisma";
 import { displayPhone, formatDateTime, centsToCurrency } from "@/lib/utils";
 import EditBookingTime from "./edit-booking-time";
+import { cancelAppointmentAdmin } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -55,9 +56,23 @@ export default async function AppointmentsPage() {
                       </li>
                     ))}
                   </ul>
-                  <div className="flex justify-between font-bold text-stone-900 text-sm">
+                  <div className="flex justify-between font-bold text-stone-900 text-sm mb-4">
                     <span>Total:</span>
                     <span>{centsToCurrency(appt.totalPriceCents || 0)}</span>
+                  </div>
+                  
+                  <div className="flex justify-end border-t border-stone-200 pt-3">
+                    <form action={async () => {
+                      "use server"
+                      await cancelAppointmentAdmin(appt.id)
+                    }}>
+                      <button 
+                        className="text-xs font-semibold text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 transition-colors px-3 py-1.5 rounded-full"
+                        type="submit"
+                      >
+                        Cancel Booking
+                      </button>
+                    </form>
                   </div>
                 </div>
               </div>

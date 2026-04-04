@@ -91,6 +91,7 @@ model Appointment {
   email            String
   phone            String
   scheduledAt      DateTime
+  endTime          DateTime?
   status           AppointmentStatus    @default(PENDING)
   totalPriceCents  Int?
   notes            String?

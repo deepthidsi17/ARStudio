@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 
-export async function getAvailableTimeSlots(dateStr: string) {
+export async function getAvailableTimeSlots(dateStr: string, requiredDurationMins: number = 60) {
   try {
     const localDate = new Date(dateStr + "T00:00:00");
     const dateOnly = dateStr; // since it's passed as YYYY-MM-DD
@@ -58,18 +58,29 @@ export async function getAvailableTimeSlots(dateStr: string) {
         scheduledAt: { gte: startOfDay, lte: endOfDay },
         status: { in: ["PENDING", "CONFIRMED"] }
       },
-      select: { scheduledAt: true }
+      select: { scheduledAt: true, endTime: true, services: { select: { serviceName: true } } }
     });
 
-    const bookedTimes = booked.map(b => {
-      const h = b.scheduledAt.getHours().toString().padStart(2, '0');
-      const m = b.scheduledAt.getMinutes().toString().padStart(2, '0');
-      return `${dateStr}T${h}:${m}:00`;
+    const availableSlots = slots.filter(slot => {
+      const slotStart = new Date(slot.value);
+      const slotEnd = new Date(slotStart.getTime() + requiredDurationMins * 60000);
+      
+      // Slot is blocked if it overlaps any existing appointment.
+      const hasOverlap = booked.some(appt => {
+        const apptStart = appt.scheduledAt;
+        let actualEnd = appt.endTime;
+        
+        if (!actualEnd) {
+           const isOnlyThreading = appt.services.length > 0 && appt.services.every(s => s.serviceName.toLowerCase().includes("threading"));
+           const minDuration = isOnlyThreading ? 30 : 60;
+           actualEnd = new Date(apptStart.getTime() + minDuration * 60000);
+        }
+        
+        return (slotStart < actualEnd) && (slotEnd > apptStart);
+      });
+      
+      return !hasOverlap;
     });
-
-    // The user requested to be able to double book slots
-    // Therefore, we no longer filter out already booked times.
-    const availableSlots = slots;
 
     // Sort AM first, then PM explicitly, though chronological works too
     const amSlots = availableSlots.filter(s => s.isAM);
@@ -93,16 +104,22 @@ export async function createBooking(data: {
 }) {
   try {
     const name = `${data.firstName} ${data.lastName}`.trim();
+    const isOnlyThreading = data.services.length > 0 && data.services.every(svc => svc.name.toLowerCase().includes("threading"));
+    const durationMinutes = isOnlyThreading ? 30 : 60;
     
+    const start = new Date(data.scheduledAt);
+    const end = new Date(start.getTime() + durationMinutes * 60000);
+
     // Log data simply to help us diagnose if it happens again.
-    console.log("Creating booking with data:", { ...data, name });
+    console.log("Creating booking with data:", { ...data, name, endTime: end });
 
     const appointment = await prisma.appointment.create({
       data: {
         name,
         email: data.email,
         phone: data.phone,
-        scheduledAt: new Date(data.scheduledAt),
+        scheduledAt: start,
+        endTime: end,
         totalPriceCents: data.totalPriceCents,
         status: "PENDING",
         services: {

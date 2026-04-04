@@ -40,11 +40,16 @@ export default async function AppointmentsPage() {
                   </span>
                 </div>
                 <div className="pt-2">
-                  <div className="flex items-center">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-0">
                     <p className="text-sm font-bold text-rose-600">
                       {formatDateTime(appt.scheduledAt)}
+                      {appt.endTime && (
+                        <span className="text-stone-500 font-normal ml-1">
+                          to {appt.endTime.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+                        </span>
+                      )}
                     </p>
-                    <EditBookingTime id={appt.id} currentDateTime={appt.scheduledAt} isPast={false} />
+                    <EditBookingTime id={appt.id} currentDateTime={appt.scheduledAt} currentEndTime={appt.endTime} isPast={false} />
                   </div>
                 </div>
                 <div className="mt-4 pt-4 border-t border-stone-200">

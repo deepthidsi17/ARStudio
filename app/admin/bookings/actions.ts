@@ -3,11 +3,12 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
-export async function updateAppointmentTime(id: string, newDateTimeStr: string) {
+export async function updateAppointmentTime(id: string, newStartStr: string, newEndStr: string) {
   await prisma.appointment.update({
     where: { id },
     data: {
-      scheduledAt: new Date(newDateTimeStr)
+      scheduledAt: new Date(newStartStr),
+      endTime: new Date(newEndStr)
     }
   });
 

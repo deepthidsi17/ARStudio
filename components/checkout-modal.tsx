@@ -25,7 +25,10 @@ export function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
   useEffect(() => {
     if (selectedDate) {
       setIsLoadingSlots(true);
-      getAvailableTimeSlots(selectedDate).then(res => {
+      const isOnlyThreading = items.length > 0 && items.every(i => i.name.toLowerCase().includes("threading"));
+      const requiredDuration = isOnlyThreading ? 30 : 60;
+      
+      getAvailableTimeSlots(selectedDate, requiredDuration).then(res => {
         setAvailableSlots(res.slots || []);
         setIsLoadingSlots(false);
       });
@@ -33,7 +36,7 @@ export function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
     } else {
       setAvailableSlots([]);
     }
-  }, [selectedDate]);
+  }, [selectedDate, items]);
 
   if (!isOpen) return null;
 

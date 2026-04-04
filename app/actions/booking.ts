@@ -67,8 +67,9 @@ export async function getAvailableTimeSlots(dateStr: string) {
       return `${dateStr}T${h}:${m}:00`;
     });
 
-    // Make sure we have AM first, PM next (which they naturally are sequentially 0-23 hours anyway!)
-    const availableSlots = slots.filter(s => !bookedTimes.includes(s.value));
+    // The user requested to be able to double book slots
+    // Therefore, we no longer filter out already booked times.
+    const availableSlots = slots;
 
     // Sort AM first, then PM explicitly, though chronological works too
     const amSlots = availableSlots.filter(s => s.isAM);

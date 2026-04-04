@@ -1,6 +1,7 @@
 import { PageHeader, SectionCard } from "@/components/ui";
 import { prisma } from "@/lib/prisma";
 import { displayPhone, formatDateTime, centsToCurrency } from "@/lib/utils";
+import EditBookingTime from "./edit-booking-time";
 
 export const dynamic = "force-dynamic";
 
@@ -38,9 +39,12 @@ export default async function AppointmentsPage() {
                   </span>
                 </div>
                 <div className="pt-2">
-                  <p className="text-sm font-bold text-rose-600">
-                    {formatDateTime(appt.scheduledAt)}
-                  </p>
+                  <div className="flex items-center">
+                    <p className="text-sm font-bold text-rose-600">
+                      {formatDateTime(appt.scheduledAt)}
+                    </p>
+                    <EditBookingTime id={appt.id} currentDateTime={appt.scheduledAt} isPast={false} />
+                  </div>
                 </div>
                 <div className="mt-4 pt-4 border-t border-stone-200">
                   <ul className="text-sm text-stone-600 space-y-1 mb-2">

@@ -116,7 +116,7 @@ export function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
               </svg>
             </div>
             <h3 className="text-2xl font-bold text-stone-900 mb-2">Booking Confirmed!</h3>
-            <p className="text-stone-500 mb-6">A confirmation email has been sent with your booking details.</p>
+            <p className="text-stone-500 mb-6">Your booking has been successfully added to our schedule. We look forward to seeing you!</p>
             
             <div className="bg-stone-50 border border-stone-200 rounded-2xl p-6 text-left">
               <h4 className="font-semibold tracking-wide text-stone-900 flex items-center gap-2 mb-2">
@@ -124,13 +124,14 @@ export function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                 </svg>
-                Location & Details
+                Contact & Location Details
               </h4>
               <p className="text-sm text-stone-600 leading-relaxed mb-4">
+                <strong>Phone:</strong> (469) 469-8217<br /><br />
                 <strong>Address:</strong><br />
                 AR Glam Studio<br />
-                123 Make Believe Road<br />
-                North Dallas, TX 75001<br />
+                North Dallas Area<br />
+                Texas, United States<br />
               </p>
               <p className="text-sm text-stone-500 bg-white p-3 rounded-xl border border-stone-100">
                 Please try to arrive 5 minutes early to your appointment. See you soon!

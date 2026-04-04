@@ -114,10 +114,6 @@ export async function createBooking(data: {
       }
     });
 
-    // In a real application, you would integrate a mailer like Resend or SendGrid here
-    // e.g. await resend.emails.send({ to: data.email, subject: "Booking Confirmed", html: "..." })
-    console.log(`📧 SYSTEM: Sent confirmation email to ${data.email} for appointment ID: ${appointment.id}`);
-
     return { success: true, appointmentId: appointment.id };
   } catch (error: any) {
     console.error("Booking creation failed:", error);

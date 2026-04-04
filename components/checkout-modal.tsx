@@ -216,6 +216,7 @@ export function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
                 <div>
                   <label className="block text-sm font-medium text-stone-700 mb-1">Email Address</label>
                   <input required name="email" value={formData.email} onChange={handleChange} type="email" className="w-full rounded-xl border-stone-300 shadow-sm focus:border-stone-900 focus:ring-stone-900 sm:text-sm" placeholder="e.g. client@example.com" />
+                  <p className="text-xs text-stone-500 mt-1 ml-1">We will send your appointment confirmation here.</p>
                 </div>
 
                 <div>

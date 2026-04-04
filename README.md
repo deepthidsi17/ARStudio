@@ -57,6 +57,18 @@ Webhook endpoint for later:
 
 - `POST /api/calendly/webhook`
 
+## Email Configuration
+
+The application is integrated with **Zoho Mail** for sending automated booking confirmations, modification updates, and cancellation notices directly to the customer and the host.
+
+- **Provider:** Zoho (`smtp.zoho.com`)
+- **From Address:** `hello@arglamstudio.com`
+- **Environment Variables Required:**
+  - `EMAIL_USER` (set to `hello@arglamstudio.com`)
+  - `EMAIL_PASS` (the standalone Zoho App Password)
+
+Ensure these are properly configured in Vercel to allow the Next.js Server Actions to dispatch notifications seamlessly.
+
 ## Main routes
 
 - `/` dashboard

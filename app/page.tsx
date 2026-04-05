@@ -262,7 +262,7 @@ export default async function Home() {
                 id="makeup-hair"
                 title="Makeup & Hair"
                 description="From natural daytime enhancements to full glamorous bridal looks, perfectly tailored to your style."
-                  imageUrl="/service-images/hair-makeup.png"
+                  imageUrl="/service-images/hero_picture.png"
                 services={makeupServices.map((service) => ({ ...service, description: getServiceDescription(service.name) }))}
               />
             </div>

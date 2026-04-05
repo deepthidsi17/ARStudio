@@ -200,7 +200,7 @@ export default async function Home() {
           </div>
           <div className="relative aspect-[4/3] w-full overflow-hidden rounded-bl-[100px] shadow-lg">
             <Image 
-              src="/service-images/hair-makeup.png" 
+              src="/service-images/hero_picture.png" 
               alt="AR Glam Studio Styling" 
               fill 
               sizes="(max-width: 1024px) 100vw, 50vw"
@@ -262,7 +262,7 @@ export default async function Home() {
                 id="makeup-hair"
                 title="Makeup & Hair"
                 description="From natural daytime enhancements to full glamorous bridal looks, perfectly tailored to your style."
-                  imageUrl="/service-images/makeup-hair-service.jpg"
+                  imageUrl="/service-images/hair-makeup.png"
                 services={makeupServices.map((service) => ({ ...service, description: getServiceDescription(service.name) }))}
               />
             </div>

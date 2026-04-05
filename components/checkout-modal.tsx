@@ -55,8 +55,14 @@ export function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
     }
 
     const phoneDigits = formData.phone.replace(/\D/g, '');
-    if (phoneDigits.length < 10) {
+    if (phoneDigits.length !== 10) {
       alert("Please provide a valid 10-digit phone number.");
+      return;
+    }
+    
+    // Block dummy numbers
+    if (/^(\d)\1{9}$/.test(phoneDigits) || phoneDigits === "1234567890" || phoneDigits === "0987654321") {
+      alert("Please provide a valid real phone number.");
       return;
     }
 
@@ -200,35 +206,35 @@ export function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-stone-700 mb-1">First Name</label>
-                    <input required name="firstName" value={formData.firstName} onChange={handleChange} type="text" minLength={3} className="w-full rounded-xl border-stone-300 shadow-sm focus:border-stone-900 focus:ring-stone-900 sm:text-sm" />
+                    <input required name="firstName" value={formData.firstName} onChange={handleChange} type="text" minLength={3} className="w-full rounded-xl border border-stone-300 p-3 min-h-[44px] bg-white text-stone-900 shadow-sm focus:border-stone-900 focus:ring-stone-900 sm:text-sm" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-stone-700 mb-1">Last Name</label>
-                    <input required name="lastName" value={formData.lastName} onChange={handleChange} type="text" minLength={2} className="w-full rounded-xl border-stone-300 shadow-sm focus:border-stone-900 focus:ring-stone-900 sm:text-sm" />
+                    <input required name="lastName" value={formData.lastName} onChange={handleChange} type="text" minLength={2} className="w-full rounded-xl border border-stone-300 p-3 min-h-[44px] bg-white text-stone-900 shadow-sm focus:border-stone-900 focus:ring-stone-900 sm:text-sm" />
                   </div>
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium text-stone-700 mb-1">Phone Number</label>
-                  <input required name="phone" value={formData.phone} onChange={handleChange} type="tel" className="w-full rounded-xl border-stone-300 shadow-sm focus:border-stone-900 focus:ring-stone-900 sm:text-sm" placeholder="e.g. 555-1234" />
+                  <input required name="phone" value={formData.phone} onChange={handleChange} type="tel" maxLength={15} className="w-full rounded-xl border border-stone-300 p-3 min-h-[44px] bg-white text-stone-900 shadow-sm focus:border-stone-900 focus:ring-stone-900 sm:text-sm" placeholder="e.g. 5551234567" />
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium text-stone-700 mb-1">Email Address</label>
-                  <input required name="email" value={formData.email} onChange={handleChange} type="email" className="w-full rounded-xl border-stone-300 shadow-sm focus:border-stone-900 focus:ring-stone-900 sm:text-sm" placeholder="e.g. client@example.com" />
+                  <input required name="email" value={formData.email} onChange={handleChange} type="email" className="w-full rounded-xl border border-stone-300 p-3 min-h-[44px] bg-white text-stone-900 shadow-sm focus:border-stone-900 focus:ring-stone-900 sm:text-sm" placeholder="e.g. client@example.com" />
                   <p className="text-xs text-stone-500 mt-1 ml-1">We will send your appointment confirmation here.</p>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-stone-700 mb-1">Select Date</label>
                   <input 
-                    required 
+                    required
                     type="date" 
                     min={todayStr}
                     name="selectedDate"
                     value={selectedDate}
                     onChange={(e) => setSelectedDate(e.target.value)}
-                    className="w-full rounded-xl border-stone-300 shadow-sm focus:border-stone-900 focus:ring-stone-900 sm:text-sm block" 
+                    className="w-full rounded-xl border border-stone-300 p-3 min-h-[44px] bg-white text-stone-900 shadow-sm focus:border-stone-900 focus:ring-stone-900 sm:text-sm block appearance-none" 
                   />
                 </div>
 

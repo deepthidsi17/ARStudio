@@ -4,10 +4,10 @@ const prisma = new PrismaClient();
 
 const defaultServices = [
   // ── Makeup Services ──
-  { name: "Basic Everyday Glam", priceDefault: 4000, imageUrl: "/service-images/bridal-makeup-service.png" },
-  { name: "Party & Event Look", priceDefault: 6000, imageUrl: "/service-images/bridal-makeup-service.png" },
-  { name: "Bridal Makeup", priceDefault: 8000, imageUrl: "/service-images/bridal-makeup-service.png" },
-  { name: "Hair Styles", priceDefault: 4000, imageUrl: "/service-images/bridal-makeup-service.png" },
+  { name: "Basic Everyday Glam", priceDefault: 4000, imageUrl: "/service-images/hair-makeup.png" },
+  { name: "Party & Event Look", priceDefault: 6000, imageUrl: "/service-images/hair-makeup.png" },
+  { name: "Bridal Makeup", priceDefault: 8000, imageUrl: "/service-images/hair-makeup.png" },
+  { name: "Hair Styles", priceDefault: 4000, imageUrl: "/service-images/hair-makeup.png" },
 
   // ── Saree Services ──
   { name: "Saree Pre-pleating", priceDefault: 2500, imageUrl: "/service-images/saree-draping-service.png" },

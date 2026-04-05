@@ -268,19 +268,6 @@ export default async function Home() {
             </div>
           )}
 
-          {/* Saree & Lehenga */}
-          {sareeServices.length > 0 && (
-            <div id={`details-saree-lehenga`} className="scroll-mt-24">
-              <CategorySection
-                id="saree-lehenga"
-                title="Saree & Lehenga"
-                description="Professional draping, ironing, and pre-pleating for a flawless, secure, and comfortable fit."
-                imageUrl="/service-images/saree-draping-service.png"
-                services={sareeServices.map((service) => ({ ...service, description: getServiceDescription(service.name) }))}
-              />
-            </div>
-          )}
-
           {/* Facials & D-Tan */}
           {facialServices.length > 0 && (
             <div id={`details-facials`} className="scroll-mt-24">
@@ -319,6 +306,19 @@ export default async function Home() {
               />
             </div>
           )}
+
+            {/* Saree & Lehenga */}
+            {sareeServices.length > 0 && (
+              <div id={`details-saree-lehenga`} className="scroll-mt-24">
+                <CategorySection
+                  id="saree-lehenga"
+                  title="Saree & Lehenga"
+                  description="Professional draping, ironing, and pre-pleating for a flawless, secure, and comfortable fit."
+                  imageUrl="/service-images/saree-draping-service.png"
+                  services={sareeServices.map((service) => ({ ...service, description: getServiceDescription(service.name) }))}
+                />
+              </div>
+            )}
 
           {/* Henna */}
           {hennaServices.length > 0 && (

@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { sendBookingModifiedEmail, sendBookingCancelledEmail } from "@/lib/email";
+import { sendBookingModifiedEmail, sendBookingCancelledEmail, sendBookingCompletedEmail } from "@/lib/email";
 
 export async function updateAppointmentAdmin(id: string, newStartStr: string, newEndStr: string, newServiceIds: string[]) {
   const existing = await prisma.appointment.findUnique({
@@ -55,4 +55,22 @@ export async function cancelAppointmentAdmin(id: string) {
   revalidatePath("/admin/bookings");
 
   await sendBookingCancelledEmail(appointment).catch(console.error);
+}
+
+export async function markAppointmentCompleteAdmin(id: string) {
+  const appointment = await prisma.appointment.update({
+    where: { id },
+    data: {
+      status: "COMPLETED"
+    }
+  });
+
+  const allServices = await prisma.service.findMany({
+    where: { active: true },
+    orderBy: { name: 'asc' }
+  });
+
+  revalidatePath("/admin/bookings");
+
+  await sendBookingCompletedEmail(appointment, allServices).catch(console.error);
 }

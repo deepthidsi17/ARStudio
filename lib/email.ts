@@ -127,3 +127,24 @@ export async function sendBookingCancelledEmail(appointment: any) {
   // Send to Customer only (Host is the one who cancelled it from Admin so they know)
   await sendEmail(appointment.email, "Cancelled: AR Glam Studio Appointment", customerHtml);
 }
+
+export async function sendBookingCompletedEmail(appointment: any, allServices: any[]) {
+  const serviceList = allServices.map((s: any) => `<li>${s.name} - ${centsToCurrency(s.priceDefault || 0)}</li>`).join("");
+
+  const customerHtml = `
+    <div style="text-align: center;">${LOGO_IMG}</div>
+    <h2>Thank You for Choosing Us! ❤️</h2>
+    <p>Hi ${appointment.name},</p>
+    <p>Thank you so much for your recent visit to AR Glam Studio. It was a pleasure having you!</p>
+    <p>We are always striving to improve and would love to hear your feedback on your experience. If you loved your service, we'd greatly appreciate it if you could recommend us to your friends and family.</p>
+    <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;" />
+    <h3>Our Services</h3>
+    <p>For your next visit, check out our full range of services:</p>
+    <ul style="line-height: 1.6;">${serviceList}</ul>
+    <br/>
+    <p>Ready to book again? Visit <a href="${BASE_URL}">${BASE_URL}</a> to schedule your next appointment.</p>
+    <p>Warmly,<br/>AR Glam Studio</p>
+  `;
+
+  await sendEmail(appointment.email, "Thank You from AR Glam Studio! How did we do?", customerHtml);
+}

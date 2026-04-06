@@ -2,7 +2,7 @@ import { PageHeader, SectionCard } from "@/components/ui";
 import { prisma } from "@/lib/prisma";
 import { displayPhone, formatDateTime, centsToCurrency } from "@/lib/utils";
 import EditBookingAdmin from "./edit-booking-admin";
-import { cancelAppointmentAdmin } from "./actions";
+import { cancelAppointmentAdmin, markAppointmentCompleteAdmin } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -48,7 +48,18 @@ export default async function AppointmentsPage() {
                   <EditBookingAdmin appt={appt} allServices={allServices} />
                 </div>
                 
-                <div className="flex justify-end pt-3">
+                <div className="flex justify-end pt-3 gap-2">
+                  <form action={async () => {
+                    "use server"
+                    await markAppointmentCompleteAdmin(appt.id)
+                  }}>
+                    <button 
+                      className="text-xs font-semibold text-emerald-600 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 transition-colors px-3 py-1.5 rounded-full"
+                      type="submit"
+                    >
+                      Complete
+                    </button>
+                  </form>
                   <form action={async () => {
                     "use server"
                     await cancelAppointmentAdmin(appt.id)
@@ -57,7 +68,7 @@ export default async function AppointmentsPage() {
                       className="text-xs font-semibold text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 transition-colors px-3 py-1.5 rounded-full"
                       type="submit"
                     >
-                      Cancel Booking
+                      Cancel
                     </button>
                   </form>
                 </div>

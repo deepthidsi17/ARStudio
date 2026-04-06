@@ -65,12 +65,7 @@ export async function markAppointmentCompleteAdmin(id: string) {
     }
   });
 
-  const allServices = await prisma.service.findMany({
-    where: { active: true },
-    orderBy: { name: 'asc' }
-  });
-
   revalidatePath("/admin/bookings");
 
-  await sendBookingCompletedEmail(appointment, allServices).catch(console.error);
+  await sendBookingCompletedEmail(appointment).catch(console.error);
 }

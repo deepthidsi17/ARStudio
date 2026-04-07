@@ -2,21 +2,23 @@
 
 import { prisma } from "@/lib/prisma";
 import { sendNewBookingEmail } from "@/lib/email";
+import { fromZonedTime, toZonedTime } from "date-fns-tz";
+
+const STUDIO_TZ = "America/Chicago";
 
 export async function getAvailableTimeSlots(dateStr: string, requiredDurationMins: number = 60) {
   try {
-    const localDate = new Date(dateStr + "T00:00:00");
-    const dateOnly = dateStr; // since it's passed as YYYY-MM-DD
+    const today = new Date();
+    // Get current date string in Studio TZ (YYYY-MM-DD)
+    const todayStr = today.toLocaleString("en-US", { timeZone: STUDIO_TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/(\d+)\/(\d+)\/(\d+)/, '$3-$1-$2');
     
     // Check if the current date is in the past
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    if (localDate < today) {
+    if (dateStr < todayStr) {
       return { success: true, slots: [] };
     }
     
     const rule = await prisma.scheduleRule.findUnique({
-      where: { date: dateOnly }
+      where: { date: dateStr }
     });
 
     if (!rule || !rule.isActive) {
@@ -42,7 +44,10 @@ export async function getAvailableTimeSlots(dateStr: string, requiredDurationMin
       const timeStr = `${h12}:${min.toString().padStart(2, '0')} ${ampm}`;
       const hour24 = h.toString().padStart(2, '0');
       const min24 = min.toString().padStart(2, '0');
-      const valueStr = `${dateStr}T${hour24}:${min24}:00`; 
+      
+      // Parse local studio time to universal UTC time
+      const datetimeStr = `${dateStr}T${hour24}:${min24}:00`;
+      const valueStr = fromZonedTime(datetimeStr, STUDIO_TZ).toISOString(); 
       
       slots.push({ label: timeStr, value: valueStr, isAM: ampm === 'AM' });
     }
@@ -50,9 +55,8 @@ export async function getAvailableTimeSlots(dateStr: string, requiredDurationMin
     // Now we must also filter out slots that are already booked.
     // We can do this by finding all appointments on that date.
     
-    // Local start of day and end of day in UTC roughly
-    const startOfDay = new Date(dateStr + "T00:00:00");
-    const endOfDay = new Date(dateStr + "T23:59:59");
+    const startOfDay = fromZonedTime(`${dateStr}T00:00:00`, STUDIO_TZ);
+    const endOfDay = fromZonedTime(`${dateStr}T23:59:59`, STUDIO_TZ);
     
     const booked = await prisma.appointment.findMany({
       where: {

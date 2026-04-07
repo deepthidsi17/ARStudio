@@ -17,23 +17,61 @@ const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://www.arglamstudio.co
 const LOGO_IMG = `<img src="${BASE_URL}/ar-glam-studio-logo.svg" alt="AR Glam Studio" style="max-height: 80px; margin-bottom: 20px;" />`;
 
 // Generalized send function
-async function sendEmail(to: string | string[], subject: string, html: string) {
+async function sendEmail(to: string | string[], subject: string, html: string, icalContent?: string) {
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
     console.warn("⚠️ Skipping email send: EMAIL_USER or EMAIL_PASS not configured in .env variables.");
     return;
   }
 
+  const mailOptions: any = {
+    from: `"AR Glam Studio" <${process.env.EMAIL_USER}>`,
+    to: Array.isArray(to) ? to.join(",") : to,
+    subject,
+    html,
+  };
+
+  if (icalContent) {
+    mailOptions.icalEvent = {
+        filename: 'booking.ics',
+        method: 'request',
+        content: icalContent
+    };
+  }
+
   try {
-    await transporter.sendMail({
-      from: `"AR Glam Studio" <${process.env.EMAIL_USER}>`,
-      to: Array.isArray(to) ? to.join(",") : to,
-      subject,
-      html,
-    });
+    await transporter.sendMail(mailOptions);
     console.log(`✉️ Email successfully sent to: ${to}`);
   } catch (error) {
     console.error("❌ Error sending email:", error);
   }
+}
+
+function generateIcalEvent(appointment: any): string {
+  const formatIcalDate = (d: Date) => {
+    return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  };
+
+  const start = new Date(appointment.scheduledAt);
+  let end = appointment.endTime ? new Date(appointment.endTime) : new Date(start.getTime() + 60 * 60000);
+
+  const servicesText = appointment.services.map((s: any) => s.serviceName).join(", ");
+  const dtstamp = formatIcalDate(new Date());
+
+  return `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//AR Glam Studio//Booking//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:${appointment.id}@arglamstudio.com
+DTSTAMP:${dtstamp}
+DTSTART:${formatIcalDate(start)}
+DTEND:${formatIcalDate(end)}
+SUMMARY:Studio Booking: ${appointment.name}
+DESCRIPTION:Customer: ${appointment.name}\\nPhone: ${appointment.phone}\\nEmail: ${appointment.email}\\nServices: ${servicesText}
+LOCATION:800 Walworth Drive, Prosper, TX
+STATUS:CONFIRMED
+END:VEVENT
+END:VCALENDAR`;
 }
 
 export async function sendNewBookingEmail(appointment: any) {
@@ -70,8 +108,9 @@ export async function sendNewBookingEmail(appointment: any) {
 
   // Send to Customer
   await sendEmail(appointment.email, "Your AR Glam Studio Booking Confirmation", customerHtml);
-  // Send to Host
-  await sendEmail(STUDIO_EMAIL, `New Booking: ${appointment.name} on ${timeString}`, hostHtml);
+  // Send to Host with iCal invite
+  const icalData = generateIcalEvent(appointment);
+  await sendEmail(STUDIO_EMAIL, `New Booking: ${appointment.name} on ${timeString}`, hostHtml, icalData);
 }
 
 export async function sendBookingModifiedEmail(appointment: any, oldTime: Date, newTime: Date) {
@@ -98,7 +137,8 @@ export async function sendBookingModifiedEmail(appointment: any, oldTime: Date, 
   // Send to Customer
   await sendEmail(appointment.email, "Update: Your AR Glam Studio Appointment", customerHtml);
   
-  // Send to Host for record
+  // Send to Host for record with iCal invite
+  const icalData = generateIcalEvent(appointment);
   await sendEmail(STUDIO_EMAIL, `Updated Booking: ${appointment.name}`, `
     <div>${LOGO_IMG}</div>
     <h2>Booking Adjusted</h2>
@@ -109,7 +149,7 @@ export async function sendBookingModifiedEmail(appointment: any, oldTime: Date, 
     <p><strong>Updated Services:</strong></p>
     <ul>${serviceList}</ul>
     <p><strong>New Total Value:</strong> ${totalCost}</p>
-  `);
+  `, icalData);
 }
 
 export async function sendBookingCancelledEmail(appointment: any) {

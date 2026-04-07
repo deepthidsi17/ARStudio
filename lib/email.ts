@@ -46,7 +46,7 @@ async function sendEmail(to: string | string[], subject: string, html: string, i
   }
 }
 
-function generateIcalEvent(appointment: any): string {
+function generateIcalEvent(appointment: any, studioEmail: string): string {
   const formatIcalDate = (d: Date) => {
     return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
   };
@@ -61,11 +61,14 @@ function generateIcalEvent(appointment: any): string {
 VERSION:2.0
 PRODID:-//AR Glam Studio//Booking//EN
 CALSCALE:GREGORIAN
+METHOD:REQUEST
 BEGIN:VEVENT
 UID:${appointment.id}@arglamstudio.com
 DTSTAMP:${dtstamp}
 DTSTART:${formatIcalDate(start)}
 DTEND:${formatIcalDate(end)}
+ORGANIZER;CN="AR Glam Studio":mailto:${studioEmail}
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=ACCEPTED;RSVP=FALSE:mailto:${studioEmail}
 SUMMARY:Studio Booking: ${appointment.name}
 DESCRIPTION:Customer: ${appointment.name}\\nPhone: ${appointment.phone}\\nEmail: ${appointment.email}\\nServices: ${servicesText}
 LOCATION:800 Walworth Drive, Prosper, TX
@@ -109,7 +112,7 @@ export async function sendNewBookingEmail(appointment: any) {
   // Send to Customer
   await sendEmail(appointment.email, "Your AR Glam Studio Booking Confirmation", customerHtml);
   // Send to Host with iCal invite
-  const icalData = generateIcalEvent(appointment);
+  const icalData = generateIcalEvent(appointment, STUDIO_EMAIL);
   await sendEmail(STUDIO_EMAIL, `New Booking: ${appointment.name} on ${timeString}`, hostHtml, icalData);
 }
 
@@ -138,7 +141,7 @@ export async function sendBookingModifiedEmail(appointment: any, oldTime: Date, 
   await sendEmail(appointment.email, "Update: Your AR Glam Studio Appointment", customerHtml);
   
   // Send to Host for record with iCal invite
-  const icalData = generateIcalEvent(appointment);
+  const icalData = generateIcalEvent(appointment, STUDIO_EMAIL);
   await sendEmail(STUDIO_EMAIL, `Updated Booking: ${appointment.name}`, `
     <div>${LOGO_IMG}</div>
     <h2>Booking Adjusted</h2>

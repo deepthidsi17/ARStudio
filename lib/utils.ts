@@ -1,5 +1,6 @@
 import { VisitSource } from "@prisma/client";
 import { format } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
 
 export function normalizePhone(input: string | null | undefined): string | null {
   const digits = String(input ?? "").replace(/\D/g, "");
@@ -53,7 +54,8 @@ export function formatDateTime(value: Date | string | null | undefined): string 
   if (!value) return "Not scheduled";
   const date = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(date.getTime())) return "Invalid date";
-  return format(date, "MMM d, yyyy h:mm a");
+  const zonedDate = toZonedTime(date, "America/Chicago");
+  return format(zonedDate, "MMM d, yyyy h:mm a");
 }
 
 export function visitSourceLabel(source: VisitSource): string {

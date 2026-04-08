@@ -3,6 +3,8 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { sendBookingModifiedEmail, sendBookingCancelledEmail, sendBookingCompletedEmail } from "@/lib/email";
+import { fromZonedTime } from "date-fns-tz";
+import { STUDIO_TZ } from "@/lib/utils";
 
 export async function updateAppointmentAdmin(id: string, newStartStr: string, newEndStr: string, newServiceIds: string[]) {
   const existing = await prisma.appointment.findUnique({
@@ -12,8 +14,8 @@ export async function updateAppointmentAdmin(id: string, newStartStr: string, ne
 
   if (!existing) return;
 
-  const updatedStart = new Date(newStartStr);
-  const updatedEnd = new Date(newEndStr);
+  const updatedStart = fromZonedTime(newStartStr, STUDIO_TZ);
+  const updatedEnd = fromZonedTime(newEndStr, STUDIO_TZ);
 
   const services = await prisma.service.findMany({
     where: { id: { in: newServiceIds } }

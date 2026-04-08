@@ -98,7 +98,8 @@ export default function MyBookingsPage() {
                                 month: 'short',
                                 day: 'numeric',
                                 hour: 'numeric',
-                                minute: '2-digit'
+                                minute: '2-digit',
+                                timeZone: 'America/Chicago'
                               })}
                             </p>
                             <p className="font-bold text-stone-900">{booking.name}</p>

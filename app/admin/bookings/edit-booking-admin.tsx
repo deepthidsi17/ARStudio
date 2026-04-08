@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { updateAppointmentAdmin } from "./actions";
-import { formatDateTime, centsToCurrency } from "@/lib/utils";
+import { formatDateTime, centsToCurrency, STUDIO_TZ } from "@/lib/utils";
+import { format } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
 
 export default function EditBookingAdmin({ 
   appt, 
@@ -19,20 +21,13 @@ export default function EditBookingAdmin({
   const [isSaving, setIsSaving] = useState(false);
 
   const handleEdit = () => {
-    const d = new Date(appt.scheduledAt);
-    const yr = d.getFullYear();
-    const mo = String(d.getMonth() + 1).padStart(2, '0');
-    const da = String(d.getDate()).padStart(2, '0');
-    setDateStr(`${yr}-${mo}-${da}`);
-    
-    const hr = String(d.getHours()).padStart(2, '0');
-    const mn = String(d.getMinutes()).padStart(2, '0');
-    setTimeStr(`${hr}:${mn}`);
+    const zonedD = toZonedTime(new Date(appt.scheduledAt), STUDIO_TZ);
+    setDateStr(format(zonedD, "yyyy-MM-dd"));
+    setTimeStr(format(zonedD, "HH:mm"));
 
-    const end = appt.endTime ? new Date(appt.endTime) : new Date(d.getTime() + 60 * 60000);
-    const eHr = String(end.getHours()).padStart(2, '0');
-    const eMn = String(end.getMinutes()).padStart(2, '0');
-    setEndTimeStr(`${eHr}:${eMn}`);
+    const end = appt.endTime ? new Date(appt.endTime) : new Date(new Date(appt.scheduledAt).getTime() + 60 * 60000);
+    const zonedEnd = toZonedTime(end, STUDIO_TZ);
+    setEndTimeStr(format(zonedEnd, "HH:mm"));
 
     setSelectedServiceIds(appt.services.map((s: any) => s.serviceId));
     setIsEditing(true);
@@ -60,7 +55,7 @@ export default function EditBookingAdmin({
             {formatDateTime(appt.scheduledAt)}
             {appt.endTime && (
               <span className="text-stone-500 font-normal ml-1">
-                to {new Date(appt.endTime).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+                to {format(toZonedTime(new Date(appt.endTime), STUDIO_TZ), "h:mm a")}
               </span>
             )}
           </p>

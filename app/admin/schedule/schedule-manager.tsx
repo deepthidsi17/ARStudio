@@ -2,6 +2,9 @@
 
 import { useTransition, useEffect, useState } from "react";
 import { updateScheduleRule } from "./actions";
+import { format, addDays } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
+import { STUDIO_TZ } from "@/lib/utils";
 
 type ScheduleRule = {
   date: string;
@@ -16,26 +19,16 @@ export default function ScheduleManager({ initialRules }: { initialRules: Schedu
 
   useEffect(() => {
     const generatedDays = [];
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = toZonedTime(new Date(), STUDIO_TZ);
 
     for (let i = 0; i < 30; i++) {
-      const d = new Date(today.getTime());
-      d.setDate(today.getDate() + i);
-      
-      const year = d.getFullYear();
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      const dateStr = `${year}-${month}-${day}`;
+      const d = addDays(today, i);
+      const dateStr = format(d, "yyyy-MM-dd");
       
       const dayOfWeek = d.getDay();
       const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
 
-      const label = d.toLocaleDateString("en-US", {
-        weekday: "short",
-        month: "short",
-        day: "numeric"
-      });
+      const label = format(d, "EEE, MMM d");
 
       const existing = initialRules.find((r) => r.date === dateStr);
 

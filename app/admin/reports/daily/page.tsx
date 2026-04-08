@@ -1,26 +1,31 @@
 import Link from "next/link";
-import { endOfDay, format, parseISO, startOfDay } from "date-fns";
+import { format, parseISO } from "date-fns";
+import { toZonedTime, fromZonedTime } from "date-fns-tz";
 
 import { PageHeader, SectionCard } from "@/components/ui";
 import { PrintButton } from "@/components/print-button";
 import { prisma } from "@/lib/prisma";
-import { centsToCurrency, formatDateTime } from "@/lib/utils";
+import { centsToCurrency, formatDateTime, STUDIO_TZ } from "@/lib/utils";
 
 type DailyReportPageProps = {
   searchParams: Promise<{ date?: string }>;
 };
 
 function selectedDate(input?: string) {
-  if (!input) return new Date();
+  if (!input) return toZonedTime(new Date(), STUDIO_TZ);
   const parsed = parseISO(input);
-  return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+  return Number.isNaN(parsed.getTime()) ? toZonedTime(new Date(), STUDIO_TZ) : parsed;
 }
 
 export default async function DailyReportPage({ searchParams }: DailyReportPageProps) {
   const params = await searchParams;
   const day = selectedDate(params.date);
-  const start = startOfDay(day);
-  const end = endOfDay(day);
+  
+  // Format the visual date as yyyy-MM-dd
+  const dayStr = format(day, "yyyy-MM-dd");
+  // The start of the day in the studio's timezone, converted to UTC
+  const start = fromZonedTime(`${dayStr}T00:00:00`, STUDIO_TZ);
+  const end = fromZonedTime(`${dayStr}T23:59:59`, STUDIO_TZ);
 
   const visits = await prisma.visit.findMany({
     where: {

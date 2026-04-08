@@ -3,8 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { sendNewBookingEmail } from "@/lib/email";
 import { fromZonedTime, toZonedTime } from "date-fns-tz";
-
-const STUDIO_TZ = "America/Chicago";
+import { STUDIO_TZ } from "@/lib/utils";
 
 export async function getAvailableTimeSlots(dateStr: string, requiredDurationMins: number = 60) {
   try {

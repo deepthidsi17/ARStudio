@@ -73,6 +73,7 @@ function getServiceDescription(name: string): string {
 
   // Henna Hair Color
   if (name === "Henna Hair Color") return "Natural henna hair color application service for healthy-looking coverage and shine. This service includes application only; hair wash is not included.";
+  if (name === "Herbal Henna Hair Color") return "A nourishing herbal henna treatment featuring protein and hair fall control ingredients to strengthen roots, enhance shine, and improve scalp health. Application only; hair wash is not included.";
 
   // Massage
   if (name === "Hair Oil Massage") return "Relaxing scalp and hair oil massage to reduce stress, improve circulation, and nourish roots for healthier hair.";
@@ -325,8 +326,8 @@ export default async function Home() {
             <div id={`details-henna`} className="scroll-mt-24">
               <CategorySection
                 id="henna"
-                title="Henna Hair Color"
-                description="Natural henna-based hair color for shine and coverage. Application only — hair wash is not included."
+                title="Henna Hair Treatments"
+                description="Natural, herbal-based hair color and nourishing treatments for shine, coverage, and scalp health. Application only — hair wash is not included."
                 imageUrl="/service-images/henna-service.png"
                 services={hennaServices.map((service) => ({ ...service, description: getServiceDescription(service.name) }))}
               />

@@ -46,7 +46,7 @@ const defaultServices = [
 
   // ── Henna Hair Color ──
   { name: "Henna Hair Color", priceDefault: 2500, imageUrl: "/service-images/henna-service.png" },
-  { name: "Herbal Henna Hair Treatment", priceDefault: 4500, imageUrl: "/service-images/henna-service.png" },
+  { name: "Herbal Henna Hair Color", priceDefault: 4000, imageUrl: "/service-images/henna-service.png" },
 
   // ── Massage ──
   { name: "Hair Oil Massage", priceDefault: 2500, imageUrl: "/service-images/hair-oil-massage-service.png" },

@@ -106,7 +106,7 @@ export default async function Home() {
     name.includes("Facial") || name.includes("D-Tan");
   const isThreading = (name: string) => name.includes("Threading");
   const isWaxing = (name: string) => name.includes("Waxing");
-  const isHenna = (name: string) => name === "Henna Hair Color";
+  const isHenna = (name: string) => name.includes("Henna");
   const isMassage = (name: string) =>
     name === "Hair Oil Massage" || name === "Back Massage";
   const isPackage = (name: string) =>

@@ -18,7 +18,7 @@ function getServiceDescription(name: string): string {
   if (name === "Bridal Makeup") {
     return "A timeless, elegant, and camera-perfect look designed to last 10–12+ hours. We use high-grade skin prep, seamless full coverage, and waterproof, tear-proof eye looks. Meticulously crafted for HD cameras. Perfect for your wedding ceremonies and main events.";
   }
-  if (name.includes("Hair")) {
+  if (name === "Hair Styles" || name.includes("Hair Style")) {
     return "Complete your look with professional hair styling. From sleek, voluminous blowouts to intricate, elegant updos, we tailor the style to frame your face perfectly and complement your outfit. Hair extensions and hair accessories add-ons have an additional cost.";
   }
 
@@ -72,11 +72,11 @@ function getServiceDescription(name: string): string {
   }
 
   // Henna Hair Color
-  if (name === "Henna Hair Color") return "Natural henna hair color application service for healthy-looking coverage and shine. This service includes application only; hair wash is not included.";
-  if (name === "Herbal Henna Hair Color") return "A nourishing herbal henna treatment featuring protein and hair fall control ingredients to strengthen roots, enhance shine, and improve scalp health. Application only; hair wash is not included.";
+  if (name === "Henna Hair Color") return "Plant-based henna color for warm copper to auburn tones, plus natural shine and softer-looking texture. Final shade depends on your current hair color and gray percentage. Henna deposits color only (does not lighten hair), and processing typically takes 1.5-3 hours.";
+  if (name === "Herbal Henna Hair Color") return "Herbal henna blend (typically henna with indigo and supporting herbs) for deeper brown-toned results while helping hair look fuller and glossier. Best for clients who want richer natural-looking coverage without ammonia. Results vary by starting base and usually process in 1.5-3 hours.";
 
   // Massage
-  if (name === "Hair Oil Massage") return "Relaxing scalp and hair oil massage to reduce stress, improve circulation, and nourish roots for healthier hair.";
+  if (name === "Hair Oil Massage") return "Warm-oil scalp and hair massage designed for deep relaxation and scalp comfort. Helps condition dry scalp and strands, loosen buildup, and leave hair feeling softer and manageable. Great as a self-care add-on before wash or styling.";
   if (name === "Back Massage") return "Therapeutic back massage focused on relieving muscle tension, improving blood flow, and restoring comfort.";
 
   // Special Packages

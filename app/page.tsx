@@ -46,8 +46,16 @@ function getServiceDescription(name: string): string {
   if (name === "Wine Facial") return "A rejuvenating wine-based facial rich in antioxidants that tightens pores, reduces fine lines, and adds a youthful radiance.";
   if (name === "Gold Facial") return "Premium gold facial that boosts collagen, reduces inflammation, and leaves skin with a rich, healthy golden glow.";
   if (name === "Diamond Facial") return "Our most luxurious facial — diamond dust exfoliation for deep cleansing, tightening, and an unmatched radiant finish.";
-  if (name === "D-Tan") return "Targeted de-tan treatment to remove sun damage and uneven skin tone, restoring your natural complexion.";
-  if (name === "D-Tan + Facial") return "Combined D-Tan and facial treatment for complete skin restoration — removes tan and deeply nourishes in one session.";
+  if (name === "D-Tan Face") return "Targeted de-tan treatment for the face to remove sun damage and uneven skin tone, restoring your natural complexion.";
+  if (name === "D-Tan Neck") return "Targeted de-tan for the neck to even out skin tone and reduce visible sun exposure lines.";
+  if (name === "D-Tan Half Hands (to wrist)") return "De-tan treatment for hands up to the wrist — brightens and evens skin tone for a polished look.";
+  if (name === "D-Tan Full Hands") return "Full-arm de-tan from fingertips to shoulders — removes tan and restores even, glowing skin.";
+  if (name === "D-Tan Half Back") return "Upper or lower half-back de-tan to lift sun damage and prep skin for backless or sleeveless outfits.";
+  if (name === "D-Tan Full Back") return "Complete back de-tan to remove tan lines and restore an even, smooth complexion across the entire back.";
+  if (name === "D-Tan Half Legs") return "De-tan for the lower legs (knee to ankle) to brighten and even out skin tone.";
+  if (name === "D-Tan Full Legs") return "Full-leg de-tan from ankle to thigh — removes tan lines and leaves skin radiant and even-toned.";
+  if (name === "D-Tan + Facial (Face)") return "Combined D-Tan and facial for the face — removes tan and deeply nourishes in one session.";
+  if (name.startsWith("Sun-Kissed Combo")) return "Premium combo of D-Tan for face, neck, and full hands — covers your most-visible areas in one session and saves $15 vs booking individually.";
 
   // Threading
   if (name.includes("Threading")) {
@@ -103,8 +111,10 @@ export default async function Home() {
     ["Basic Everyday Glam", "Party & Event Look", "Hair Styles"].includes(name);
   const isSaree = (name: string) =>
     name.includes("Saree") || name.includes("Lehenga");
+  const isDtan = (name: string) =>
+    name.includes("D-Tan") || name.startsWith("Sun-Kissed");
   const isFacial = (name: string) =>
-    name.includes("Facial") || name.includes("D-Tan");
+    name.includes("Facial") && !isDtan(name);
   const isThreading = (name: string) => name.includes("Threading");
   const isWaxing = (name: string) => name.includes("Waxing");
   const isHenna = (name: string) => name.includes("Henna");
@@ -136,7 +146,36 @@ export default async function Home() {
     const indexB = order.findIndex(name => b.name.trim() === name);
     return (indexA === -1 ? 99 : indexA) - (indexB === -1 ? 99 : indexB);
   });
-  const facialServices = services.filter((s) => isFacial(s.name)).sort((a, b) => { const order = ["Herbal Facial", "Fruit Facial", "Wine Facial", "Pearl Facial", "Gold Facial", "Diamond Facial", "D-Tan", "D-Tan + Facial"]; const indexA = order.findIndex(name => a.name.trim() === name); const indexB = order.findIndex(name => b.name.trim() === name); return (indexA === -1 ? 99 : indexA) - (indexB === -1 ? 99 : indexB); });
+  const facialServices = services.filter((s) => isFacial(s.name)).sort((a, b) => {
+    const order = [
+      "Herbal Facial",
+      "Fruit Facial",
+      "Wine Facial",
+      "Pearl Facial",
+      "Gold Facial",
+      "Diamond Facial",
+    ];
+    const indexA = order.findIndex(name => a.name.trim() === name);
+    const indexB = order.findIndex(name => b.name.trim() === name);
+    return (indexA === -1 ? 99 : indexA) - (indexB === -1 ? 99 : indexB);
+  });
+  const dtanServices = services.filter((s) => isDtan(s.name)).sort((a, b) => {
+    const order = [
+      "D-Tan Face",
+      "D-Tan Neck",
+      "D-Tan Half Hands (to wrist)",
+      "D-Tan Full Hands",
+      "D-Tan Half Back",
+      "D-Tan Full Back",
+      "D-Tan Half Legs",
+      "D-Tan Full Legs",
+      "D-Tan + Facial (Face)",
+      "Sun-Kissed Combo (Face, Neck & Full Hands)",
+    ];
+    const indexA = order.findIndex(name => a.name.trim() === name);
+    const indexB = order.findIndex(name => b.name.trim() === name);
+    return (indexA === -1 ? 99 : indexA) - (indexB === -1 ? 99 : indexB);
+  });
   const threadingServices = services.filter((s) => isThreading(s.name)).sort((a, b) => {
     const order = ["Eyebrow Threading", "Upper Lip Threading", "Lower Chin Threading", "Forehead Threading", "Jawline Threading", "Full Face Threading"];
     const indexA = order.findIndex(name => a.name.trim() === name);
@@ -269,15 +308,28 @@ export default async function Home() {
             </div>
           )}
 
-          {/* Facials & D-Tan */}
+          {/* Facials */}
           {facialServices.length > 0 && (
             <div id={`details-facials`} className="scroll-mt-24">
               <CategorySection
                 id="facials"
-                title="Facials & D-Tan"
-                description="Rejuvenate your skin with our premium facials and targeted de-tan treatments for a radiant complexion."
+                title="Facials"
+                description="Rejuvenate your skin with our premium facials for a radiant, refreshed complexion."
                 imageUrl="/service-images/diamond-facial-service.png"
                 services={facialServices.map((service) => ({ ...service, description: getServiceDescription(service.name) }))}
+              />
+            </div>
+          )}
+
+          {/* D-Tan Treatments */}
+          {dtanServices.length > 0 && (
+            <div id={`details-dtan`} className="scroll-mt-24">
+              <CategorySection
+                id="dtan"
+                title="D-Tan Treatments"
+                description="Targeted de-tan treatments for face, neck, hands, back, and legs — plus combo packages for full-body radiance."
+                imageUrl="/service-images/diamond-facial-service.png"
+                services={dtanServices.map((service) => ({ ...service, description: getServiceDescription(service.name) }))}
               />
             </div>
           )}

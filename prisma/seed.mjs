@@ -16,15 +16,25 @@ const defaultServices = [
   { name: "Full Saree Iron + Pre-pleating + Draping", priceDefault: 6500, imageUrl: "/service-images/saree-draping-service.png" },
   { name: "Lehenga Draping", priceDefault: 2000, imageUrl: "/service-images/saree-draping-service.png" },
 
-  // ── Facials & D-Tan ──
+  // ── Facials ──
   { name: "Fruit Facial", priceDefault: 3000, imageUrl: "/service-images/diamond-facial-service.png" },
   { name: "Herbal Facial", priceDefault: 3000, imageUrl: "/service-images/diamond-facial-service.png" },
   { name: "Pearl Facial", priceDefault: 4000, imageUrl: "/service-images/diamond-facial-service.png" },
   { name: "Wine Facial", priceDefault: 4500, imageUrl: "/service-images/diamond-facial-service.png" },
   { name: "Gold Facial", priceDefault: 5000, imageUrl: "/service-images/diamond-facial-service.png" },
   { name: "Diamond Facial", priceDefault: 6000, imageUrl: "/service-images/diamond-facial-service.png" },
-  { name: "D-Tan", priceDefault: 3000, imageUrl: "/service-images/diamond-facial-service.png" },
-  { name: "D-Tan + Facial", priceDefault: 6000, imageUrl: "/service-images/diamond-facial-service.png" },
+
+  // ── D-Tan Treatments ──
+  { name: "D-Tan Face", priceDefault: 3000, imageUrl: "/service-images/diamond-facial-service.png" },
+  { name: "D-Tan Neck", priceDefault: 1500, imageUrl: "/service-images/diamond-facial-service.png" },
+  { name: "D-Tan Half Hands (to wrist)", priceDefault: 2500, imageUrl: "/service-images/diamond-facial-service.png" },
+  { name: "D-Tan Full Hands", priceDefault: 4500, imageUrl: "/service-images/diamond-facial-service.png" },
+  { name: "D-Tan Half Back", priceDefault: 3500, imageUrl: "/service-images/diamond-facial-service.png" },
+  { name: "D-Tan Full Back", priceDefault: 5000, imageUrl: "/service-images/diamond-facial-service.png" },
+  { name: "D-Tan Half Legs", priceDefault: 3500, imageUrl: "/service-images/diamond-facial-service.png" },
+  { name: "D-Tan Full Legs", priceDefault: 5500, imageUrl: "/service-images/diamond-facial-service.png" },
+  { name: "D-Tan + Facial (Face)", priceDefault: 6000, imageUrl: "/service-images/diamond-facial-service.png" },
+  { name: "Sun-Kissed Combo (Face, Neck & Full Hands)", priceDefault: 7500, imageUrl: "/service-images/diamond-facial-service.png" },
 
   // ── Threading Services ──
   { name: "Eyebrow Threading", priceDefault: 600, imageUrl: "/service-images/eyebrow-threading-service.png" },

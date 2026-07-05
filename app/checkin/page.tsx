@@ -1,11 +1,13 @@
 import Link from "next/link";
 
 import { prisma } from "@/lib/prisma";
-import { centsToCurrency, displayPhone, formatDateTime, normalizeEmail, normalizePhone, PHONE_PATTERN } from "@/lib/utils";
+import { displayPhone, formatDateTime, normalizeEmail, normalizePhone, PHONE_PATTERN } from "@/lib/utils";
 import { MessageBanner, PageHeader, SectionCard } from "@/components/ui";
 import { createCustomerVisitAction, createReturningVisitAction } from "@/app/actions";
 import { ValidatedCheckinForm } from "@/components/validated-checkin-form";
 import CheckinServicePicker from "@/components/checkin-service-picker";
+import ConsentForm from "@/components/consent-form";
+import { CONSENT_VERSION } from "@/lib/consent";
 
 type CheckinPageProps = {
   searchParams: Promise<{
@@ -52,7 +54,12 @@ async function lookupCustomer(contact?: string) {
           scheduledAt: { gte: startOfDay, lt: endOfDay },
         },
         include: { services: true }
-      }
+      },
+      consents: {
+        where: { formVersion: CONSENT_VERSION },
+        orderBy: { createdAt: "desc" },
+        take: 1,
+      },
     },
   });
 }
@@ -98,6 +105,9 @@ export default async function CheckinPage({ searchParams }: CheckinPageProps) {
     ...standaloneAppointments.flatMap(appt => appt.services.map(s => s.serviceId))
   ];
   const uniquePreselectedIds = Array.from(new Set(allPreselectedIds));
+
+  const existingConsent = customer?.consents?.[0] ?? null;
+  const hasValidConsent = Boolean(existingConsent);
 
   const mode = params.mode === "new" ? "new" : "returning";
 
@@ -193,6 +203,16 @@ export default async function CheckinPage({ searchParams }: CheckinPageProps) {
                         placeholder="Anything special for this visit?"
                       />
                     </div>
+
+                    {hasValidConsent ? (
+                      <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+                        <strong className="font-semibold">Consent on file.</strong>{" "}
+                        Signed {formatDateTime(existingConsent!.createdAt)} · current form version. No re-sign needed today.
+                      </div>
+                    ) : (
+                      <ConsentForm defaultSignerName={customer.name} />
+                    )}
+
                     <button
                       type="submit"
                       className="w-full rounded-3xl bg-rose-500 px-5 py-4 text-lg font-semibold text-white transition hover:bg-rose-600"
@@ -216,7 +236,7 @@ export default async function CheckinPage({ searchParams }: CheckinPageProps) {
               ) : contact ? (
                 <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
                   {standaloneAppointments.length > 0 ? (
-                    <span><strong>Appointment found!</strong> But they don't have a profile yet. Switch to &quot;New customer&quot; above to check them in.</span>
+                    <span><strong>Appointment found!</strong> But they don&apos;t have a profile yet. Switch to &quot;New customer&quot; above to check them in.</span>
                   ) : (
                     <span>No matching customer yet. Use the new customer form to create one.</span>
                   )}
@@ -292,6 +312,9 @@ export default async function CheckinPage({ searchParams }: CheckinPageProps) {
                     placeholder="Optional notes for the visit"
                   />
                 </div>
+
+                <ConsentForm defaultSignerName={standaloneAppointments[0]?.name || ""} />
+
                 <button
                   type="submit"
                   className="w-full rounded-3xl bg-rose-500 px-5 py-4 text-lg font-semibold text-white transition hover:bg-rose-600"

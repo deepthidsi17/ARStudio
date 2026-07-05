@@ -3,7 +3,20 @@ import { notFound } from "next/navigation";
 import { deleteCustomerAction, updateCustomerAction } from "@/app/actions";
 import { PageHeader, SectionCard } from "@/components/ui";
 import { prisma } from "@/lib/prisma";
+import { HEALTH_FLAGS } from "@/lib/consent";
 import { centsToCurrency, displayPhone, formatDateTime, visitSourceLabel } from "@/lib/utils";
+
+const FLAG_LABELS: Record<string, string> = Object.fromEntries(
+  HEALTH_FLAGS.map((f) => [f.name, f.label]),
+);
+
+type ConsentHealthHistory = {
+  allergies?: string;
+  skinConditions?: string;
+  medications?: string;
+  reactionDetails?: string;
+  flags?: string[];
+};
 
 type CustomerDetailPageProps = {
   params: Promise<{ id: string }>;
@@ -23,6 +36,9 @@ export default async function CustomerDetailPage({ params, searchParams }: Custo
       appointments: {
         orderBy: { scheduledAt: "desc" },
         take: 10,
+      },
+      consents: {
+        orderBy: { createdAt: "desc" },
       },
     },
   });
@@ -158,6 +174,108 @@ export default async function CustomerDetailPage({ params, searchParams }: Custo
           {!customer.appointments.length ? (
             <div className="rounded-2xl border border-dashed border-stone-300 p-6 text-sm text-stone-500">
               No recent appointments.
+            </div>
+          ) : null}
+        </div>
+      </SectionCard>
+
+      <SectionCard
+        title="Consent &amp; waiver records"
+        description="Signed consent and liability waiver forms on file for this customer."
+      >
+        <div className="space-y-4">
+          {customer.consents.map((consent) => {
+            const health = (consent.healthHistory as ConsentHealthHistory | null) ?? {};
+            const flags = health.flags ?? [];
+            return (
+              <div key={consent.id} className="rounded-2xl border border-stone-200 bg-stone-50 p-4">
+                <div className="flex flex-col gap-1 md:flex-row md:items-center md:justify-between">
+                  <div>
+                    <p className="font-semibold text-stone-900">
+                      Signed by {consent.signatureName}
+                      {consent.isMinor && consent.guardianName
+                        ? ` (guardian: ${consent.guardianName})`
+                        : ""}
+                    </p>
+                    <p className="text-sm text-stone-600">{formatDateTime(consent.createdAt)}</p>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2 text-xs">
+                    <span className="rounded-full border border-stone-300 bg-white px-2.5 py-1 text-stone-600">
+                      Form v{consent.formVersion}
+                    </span>
+                    {consent.releaseAccepted ? (
+                      <span className="rounded-full border border-emerald-300 bg-emerald-50 px-2.5 py-1 font-medium text-emerald-700">
+                        Release accepted
+                      </span>
+                    ) : (
+                      <span className="rounded-full border border-red-300 bg-red-50 px-2.5 py-1 font-medium text-red-700">
+                        Release NOT accepted
+                      </span>
+                    )}
+                    <span className="rounded-full border border-stone-300 bg-white px-2.5 py-1 text-stone-600">
+                      Photos: {consent.photoConsent ? "consented" : "declined"}
+                    </span>
+                  </div>
+                </div>
+
+                <dl className="mt-3 grid gap-2 text-sm text-stone-700 sm:grid-cols-2">
+                  {health.allergies ? (
+                    <div>
+                      <dt className="text-xs uppercase tracking-[0.2em] text-stone-400">Allergies</dt>
+                      <dd>{health.allergies}</dd>
+                    </div>
+                  ) : null}
+                  {health.skinConditions ? (
+                    <div>
+                      <dt className="text-xs uppercase tracking-[0.2em] text-stone-400">Skin conditions</dt>
+                      <dd>{health.skinConditions}</dd>
+                    </div>
+                  ) : null}
+                  {health.medications ? (
+                    <div>
+                      <dt className="text-xs uppercase tracking-[0.2em] text-stone-400">Medications</dt>
+                      <dd>{health.medications}</dd>
+                    </div>
+                  ) : null}
+                  {health.reactionDetails ? (
+                    <div>
+                      <dt className="text-xs uppercase tracking-[0.2em] text-stone-400">Notes</dt>
+                      <dd>{health.reactionDetails}</dd>
+                    </div>
+                  ) : null}
+                </dl>
+
+                {flags.length ? (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {flags.map((flag) => (
+                      <span
+                        key={flag}
+                        className="rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800"
+                      >
+                        ⚠ {FLAG_LABELS[flag] ?? flag}
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
+
+                {consent.signatureImage ? (
+                  <div className="mt-3">
+                    <p className="text-xs uppercase tracking-[0.2em] text-stone-400">Drawn signature</p>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={consent.signatureImage}
+                      alt={`Signature of ${consent.signatureName}`}
+                      className="mt-1 h-20 rounded-lg border border-stone-200 bg-white"
+                    />
+                  </div>
+                ) : null}
+              </div>
+            );
+          })}
+
+          {!customer.consents.length ? (
+            <div className="rounded-2xl border border-dashed border-stone-300 p-6 text-sm text-stone-500">
+              No signed consent forms on file yet.
             </div>
           ) : null}
         </div>

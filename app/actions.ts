@@ -2,9 +2,11 @@
 
 import { VisitSource } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { prisma } from "@/lib/prisma";
+import { ACKNOWLEDGMENTS, CONSENT_VERSION } from "@/lib/consent";
 import { dollarsToCents, isValidPhoneNumber, normalizeEmail, normalizePhone } from "@/lib/utils";
 
 function parseServiceIds(formData: FormData): string[] {
@@ -12,6 +14,71 @@ function parseServiceIds(formData: FormData): string[] {
     .getAll("serviceIds")
     .map((value) => String(value))
     .filter(Boolean);
+}
+
+function str(formData: FormData, key: string): string {
+  return String(formData.get(key) ?? "").trim();
+}
+
+// Returns an error message if the form claims to include consent but is missing
+// the two legally load-bearing pieces (typed signature + accepted release).
+// The client enforces these too; this is server-side defense in depth.
+function consentError(formData: FormData): string | null {
+  if (formData.get("consentProvided") !== "true") return null;
+  if (!str(formData, "signatureName")) return "Please type your full legal name to sign the consent form.";
+  if (formData.get("releaseAccepted") !== "on") return "Please read and accept the Release and Waiver of Liability to continue.";
+  for (const ack of ACKNOWLEDGMENTS) {
+    if (ack.required && formData.get(`ack_${ack.name}`) !== "on") {
+      return "Please confirm the required acknowledgments to continue.";
+    }
+  }
+  return null;
+}
+
+// Persists a signed consent record for a visit. No-op if the form didn't carry
+// consent (e.g. a returning client who already signed the current version).
+async function saveConsent(formData: FormData, customerId: string, visitId: string) {
+  if (formData.get("consentProvided") !== "true") return;
+
+  const flags = formData.getAll("hh_flags").map(String);
+  const acknowledgments: Record<string, boolean> = {};
+  for (const ack of ACKNOWLEDGMENTS) {
+    acknowledgments[ack.name] = formData.get(`ack_${ack.name}`) === "on";
+  }
+
+  const signatureImage = str(formData, "signatureImage");
+  const isMinor = formData.get("isMinor") === "on";
+
+  const requestHeaders = await headers();
+  const ipAddress =
+    requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    requestHeaders.get("x-real-ip") ||
+    null;
+
+  await prisma.consent.create({
+    data: {
+      customerId,
+      visitId,
+      formVersion: str(formData, "consentVersion") || CONSENT_VERSION,
+      healthHistory: {
+        allergies: str(formData, "hh_allergies"),
+        skinConditions: str(formData, "hh_skinConditions"),
+        medications: str(formData, "hh_medications"),
+        reactionDetails: str(formData, "hh_reactionDetails"),
+        flags,
+      },
+      acknowledgments,
+      releaseAccepted: formData.get("releaseAccepted") === "on",
+      signatureName: str(formData, "signatureName"),
+      signatureType: signatureImage ? "drawn" : "typed",
+      signatureImage: signatureImage || null,
+      isMinor,
+      guardianName: isMinor ? str(formData, "guardianName") || null : null,
+      photoConsent: formData.get("photoConsent") === "on",
+      ipAddress,
+      userAgent: requestHeaders.get("user-agent") || null,
+    },
+  });
 }
 
 async function attachServices(visitId: string, serviceIds: string[]) {
@@ -68,6 +135,11 @@ export async function createCustomerVisitAction(formData: FormData) {
     checkinRedirect("Please select at least one service.");
   }
 
+  const consentValidationError = consentError(formData);
+  if (consentValidationError) {
+    checkinRedirect(consentValidationError);
+  }
+
   const normalizedPhone = normalizePhone(phone);
   const normalizedEmail = normalizeEmail(email);
 
@@ -111,6 +183,7 @@ export async function createCustomerVisitAction(formData: FormData) {
   });
 
   await attachServices(visit.id, serviceIds);
+  await saveConsent(formData, customer.id, visit.id);
   revalidatePath("/checkin");
   revalidatePath("/customers");
   revalidatePath("/visits");
@@ -126,6 +199,11 @@ export async function createReturningVisitAction(formData: FormData) {
     checkinRedirect("Please choose a customer and at least one service.");
   }
 
+  const consentValidationError = consentError(formData);
+  if (consentValidationError) {
+    checkinRedirect(consentValidationError);
+  }
+
   const visit = await prisma.visit.create({
     data: {
       customerId,
@@ -135,6 +213,7 @@ export async function createReturningVisitAction(formData: FormData) {
   });
 
   await attachServices(visit.id, serviceIds);
+  await saveConsent(formData, customerId, visit.id);
   const customer = await prisma.customer.findUnique({ where: { id: customerId } });
   revalidatePath("/checkin");
   revalidatePath("/customers");

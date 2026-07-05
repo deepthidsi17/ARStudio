@@ -4,10 +4,10 @@ const prisma = new PrismaClient();
 
 const defaultServices = [
   // ── Makeup Services ──
-  { name: "Basic Everyday Glam", priceDefault: 4000, imageUrl: "/service-images/hero_picture.png" },
-  { name: "Party & Event Look", priceDefault: 6000, imageUrl: "/service-images/hero_picture.png" },
+  { name: "Basic Everyday Glam", priceDefault: 6000, imageUrl: "/service-images/hero_picture.png" },
+  { name: "Party & Event Look", priceDefault: 8000, imageUrl: "/service-images/hero_picture.png" },
   { name: "Bridal Makeup", priceDefault: 8000, imageUrl: "/service-images/hero_picture.png" },
-  { name: "Hair Styles", priceDefault: 4000, imageUrl: "/service-images/hero_picture.png" },
+  { name: "Hair Styles", priceDefault: 5000, imageUrl: "/service-images/hero_picture.png" },
 
   // ── Saree Services ──
   { name: "Saree Pre-pleating", priceDefault: 2500, imageUrl: "/service-images/saree-draping-service.png" },
@@ -17,12 +17,12 @@ const defaultServices = [
   { name: "Lehenga Draping", priceDefault: 2000, imageUrl: "/service-images/saree-draping-service.png" },
 
   // ── Facials ──
-  { name: "Fruit Facial", priceDefault: 3000, imageUrl: "/service-images/diamond-facial-service.png" },
-  { name: "Herbal Facial", priceDefault: 3000, imageUrl: "/service-images/diamond-facial-service.png" },
-  { name: "Pearl Facial", priceDefault: 4000, imageUrl: "/service-images/diamond-facial-service.png" },
-  { name: "Wine Facial", priceDefault: 4500, imageUrl: "/service-images/diamond-facial-service.png" },
-  { name: "Gold Facial", priceDefault: 5000, imageUrl: "/service-images/diamond-facial-service.png" },
-  { name: "Diamond Facial", priceDefault: 6000, imageUrl: "/service-images/diamond-facial-service.png" },
+  { name: "Fruit Facial", priceDefault: 4000, imageUrl: "/service-images/diamond-facial-service.png" },
+  { name: "Herbal Facial", priceDefault: 3500, imageUrl: "/service-images/diamond-facial-service.png" },
+  { name: "Pearl Facial", priceDefault: 5000, imageUrl: "/service-images/diamond-facial-service.png" },
+  { name: "Wine Facial", priceDefault: 5000, imageUrl: "/service-images/diamond-facial-service.png" },
+  { name: "Gold Facial", priceDefault: 6000, imageUrl: "/service-images/diamond-facial-service.png" },
+  { name: "Diamond Facial", priceDefault: 7000, imageUrl: "/service-images/diamond-facial-service.png" },
 
   // ── D-Tan Treatments ──
   { name: "D-Tan Face", priceDefault: 3000, imageUrl: "/service-images/diamond-facial-service.png" },
@@ -52,7 +52,7 @@ const defaultServices = [
   { name: "Underarms Waxing", priceDefault: 1000, imageUrl: "/service-images/full-legs-waxing-service.png" },
   { name: "Hands Waxing", priceDefault: 2500, imageUrl: "/service-images/full-legs-waxing-service.png" },
   { name: "Half Legs Waxing", priceDefault: 2500, imageUrl: "/service-images/full-legs-waxing-service.png" },
-  { name: "Full Legs Waxing", priceDefault: 3500, imageUrl: "/service-images/full-legs-waxing-service.png" },
+  { name: "Full Legs Waxing", priceDefault: 4000, imageUrl: "/service-images/full-legs-waxing-service.png" },
 
   // ── Henna Hair Color ──
   { name: "Henna Hair Color", priceDefault: 2500, imageUrl: "/service-images/henna-service.png" },

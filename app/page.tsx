@@ -201,8 +201,7 @@ export default async function Home() {
   const addOns = services.filter((s) => isAddOn(s.name)).sort((a, b) => {
     const order = [
       "Travel 5 to 10 Miles",
-      "Travel 10 to 15 Miles",
-      "Travel Over 15 Miles",
+      "Travel 10 to 20 Miles",
       "Early Morning / Late Evening Slot"
     ];
     const indexA = order.findIndex(name => a.name.includes(name));
@@ -425,7 +424,18 @@ export default async function Home() {
               Services provided outside of standard studio hours or locations will incur these additional base charges.
             </p>
             <div className="divide-y divide-stone-100">
-              {addOns.map((addon) => (
+              {addOns.filter((addon) => addon.name.includes("Travel")).map((addon) => (
+                <div key={addon.id} className="flex items-center justify-between py-4">
+                  <span className="text-sm font-medium text-stone-800">{addon.name}</span>
+                  <span className="text-sm font-semibold text-stone-500">From {centsToCurrency(addon.priceDefault ?? 0)}</span>
+                </div>
+              ))}
+              {/* Longer trips are quoted per booking rather than tiered */}
+              <div className="flex items-center justify-between gap-4 py-4">
+                <span className="text-sm font-medium text-stone-800">Travel Over 20 Miles</span>
+                <span className="text-right text-sm font-semibold text-stone-500">Based on distance &amp; travel time</span>
+              </div>
+              {addOns.filter((addon) => !addon.name.includes("Travel")).map((addon) => (
                 <div key={addon.id} className="flex items-center justify-between py-4">
                   <span className="text-sm font-medium text-stone-800">{addon.name}</span>
                   <span className="text-sm font-semibold text-stone-500">From {centsToCurrency(addon.priceDefault ?? 0)}</span>

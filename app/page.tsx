@@ -200,7 +200,6 @@ export default async function Home() {
     });
   const addOns = services.filter((s) => isAddOn(s.name)).sort((a, b) => {
     const order = [
-      "Travel Within 5 Miles",
       "Travel 5 to 10 Miles",
       "Travel 10 to 15 Miles",
       "Travel Over 15 Miles",

@@ -67,7 +67,6 @@ const defaultServices = [
   { name: "Bridal Package", priceDefault: null, imageUrl: "/service-images/bridal-package-service.png" },
 
   // ── Travel & Add-ons ──
-  { name: "Travel Within 5 Miles", priceDefault: 1000, imageUrl: "/service-images/travel-within-5-miles-service.png" },
   { name: "Travel 5 to 10 Miles", priceDefault: 1500, imageUrl: "/service-images/travel-within-5-miles-service.png" },
   { name: "Travel 10 to 15 Miles", priceDefault: 2000, imageUrl: "/service-images/travel-within-5-miles-service.png" },
   { name: "Travel Over 15 Miles", priceDefault: 2500, imageUrl: "/service-images/travel-within-5-miles-service.png" },

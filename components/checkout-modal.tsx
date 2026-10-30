@@ -41,6 +41,8 @@ export function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
   if (!isOpen) return null;
 
   const total = items.reduce((sum, item) => sum + (item.priceDefault || 0), 0);
+  // Packages are custom-priced, so the booking becomes a request we follow up on by phone
+  const isPlanning = items.some((item) => item.priceDefault === null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -147,8 +149,20 @@ export function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h3 className="text-2xl font-bold text-stone-900 mb-2">Booking Confirmed!</h3>
-            <p className="text-stone-500 mb-6">Your booking has been successfully added to our schedule. We look forward to seeing you!</p>
+            {isPlanning ? (
+              <>
+                <h3 className="text-2xl font-bold text-stone-900 mb-2">Let&apos;s Plan Together!</h3>
+                <p className="text-stone-500 mb-6">
+                  Thank you for reaching out. We&apos;re so excited to be part of your celebration! Expect a call from us soon
+                  {formData.phone ? ` at ${formData.phone}` : ""} to hear all about your day and put together a package that&apos;s just right for you.
+                </p>
+              </>
+            ) : (
+              <>
+                <h3 className="text-2xl font-bold text-stone-900 mb-2">Booking Confirmed!</h3>
+                <p className="text-stone-500 mb-6">Your booking has been successfully added to our schedule. We look forward to seeing you!</p>
+              </>
+            )}
             
             <div className="bg-stone-50 border border-stone-200 rounded-2xl p-6 text-left">
               <h4 className="font-semibold tracking-wide text-stone-900 flex items-center gap-2 mb-2">
@@ -166,7 +180,9 @@ export function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
                 Prosper, TX<br />
               </p>
               <p className="text-sm text-stone-500 bg-white p-3 rounded-xl border border-stone-100">
-                Please try to arrive 5 minutes early to your appointment. See you soon!
+                {isPlanning
+                  ? "Have ideas or inspiration photos? Keep them handy for our call. We can't wait to see them!"
+                  : "Please try to arrive 5 minutes early to your appointment. See you soon!"}
               </p>
             </div>
 
@@ -282,7 +298,9 @@ export function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
                 disabled={isSubmitting || !formData.scheduledAt}
                 className="w-full flex justify-center rounded-xl bg-stone-900 px-3 py-4 text-sm font-bold text-white shadow-sm hover:bg-stone-800 disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? "Confirming..." : "Confirm Appointment"}
+                {isPlanning
+                  ? (isSubmitting ? "Sending..." : "Let's Plan Together")
+                  : (isSubmitting ? "Confirming..." : "Confirm Appointment")}
               </button>
             </div>
           </>

@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import { formatDateTime, centsToCurrency } from "./utils";
+import { formatDateTime, centsToCurrency, formatTotal } from "./utils";
 
 // Make sure to add EMAIL_USER and EMAIL_PASS to your .env file
 const transporter = nodemailer.createTransport({
@@ -79,8 +79,47 @@ END:VCALENDAR`;
 
 export async function sendNewBookingEmail(appointment: any) {
   const timeString = formatDateTime(appointment.scheduledAt);
-  const serviceList = appointment.services.map((s: any) => `<li>${s.serviceName} - ${centsToCurrency(s.priceCents || 0)}</li>`).join("");
-  const totalCost = centsToCurrency(appointment.totalPriceCents || 0);
+  // Custom-priced services (packages) have no price yet — they're planned with the client by phone
+  const isPlanning = appointment.services.some((s: any) => s.priceCents == null);
+  const serviceList = appointment.services.map((s: any) => `<li>${s.serviceName} - ${s.priceCents == null ? "Personalized for you" : centsToCurrency(s.priceCents)}</li>`).join("");
+  const totalCost = formatTotal(appointment.services.map((s: any) => ({ priceDefault: s.priceCents })), appointment.totalPriceCents || 0);
+
+  if (isPlanning) {
+    const firstName = String(appointment.name).split(" ")[0];
+
+    const planningCustomerHtml = `
+    <div style="text-align: center;">${LOGO_IMG}</div>
+    <h2>Let's Plan Together!</h2>
+    <p>Hi ${firstName},</p>
+    <p>Thank you so much for reaching out to AR Glam Studio. We're truly excited to be part of your celebration!</p>
+    <p>Every event is a little different, so we'd love to hear all about yours. <strong>Expect a call from us soon at ${appointment.phone}</strong>. We'll chat about your day, your looks, who's getting ready with you, and your timing, then put together a package that's just right for you.</p>
+    <p><strong>Your preferred date &amp; time:</strong> ${timeString}</p>
+    <p><strong>What you're interested in:</strong></p>
+    <ul>${serviceList}</ul>
+    <p>In the meantime, feel free to jot down any ideas or inspiration photos you love. We can't wait to see them!</p>
+    <br/>
+    <p>Have a question before we connect? Just give us a call at (469) 469-8217.</p>
+    <p>With love,<br/>AR Glam Studio</p>
+  `;
+
+    const planningHostHtml = `
+    <div>${LOGO_IMG}</div>
+    <h2>New Planning Request 💐</h2>
+    <p><strong>Please call ${appointment.name} to plan their package and set the price on the booking.</strong></p>
+    <p><strong>Customer:</strong> ${appointment.name}</p>
+    <p><strong>Phone:</strong> ${appointment.phone}</p>
+    <p><strong>Email:</strong> ${appointment.email}</p>
+    <p><strong>Preferred date &amp; time:</strong> ${timeString}</p>
+    <p><strong>Interested in:</strong></p>
+    <ul>${serviceList}</ul>
+    <p><strong>Known total so far:</strong> ${totalCost}</p>
+  `;
+
+    await sendEmail(appointment.email, `Let's plan your look together, ${firstName}!`, planningCustomerHtml);
+    const icalData = generateIcalEvent(appointment, STUDIO_EMAIL);
+    await sendEmail(STUDIO_EMAIL, `Planning Request: Call ${appointment.name} (${timeString})`, planningHostHtml, icalData);
+    return;
+  }
 
   const customerHtml = `
     <div style="text-align: center;">${LOGO_IMG}</div>

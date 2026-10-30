@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useCart } from "./cart-context";
-import { centsToCurrency } from "@/lib/utils";
+import { centsToCurrency, formatTotal } from "@/lib/utils";
 import { createBooking, getAvailableTimeSlots } from "@/app/actions/booking";
 
 export function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
@@ -192,13 +192,13 @@ export function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
                   {items.map(item => (
                     <li key={item.id} className="flex justify-between text-sm text-stone-600">
                       <span>{item.name}</span>
-                      <span>{centsToCurrency(item.priceDefault ?? 0)}</span>
+                      <span>{item.priceDefault === null ? "Personalized for you" : centsToCurrency(item.priceDefault)}</span>
                     </li>
                   ))}
                 </ul>
                 <div className="pt-3 border-t border-stone-200 flex justify-between font-bold text-stone-900">
                   <span>Estimated Total:</span>
-                  <span>{centsToCurrency(total)}</span>
+                  <span>{formatTotal(items, total)}</span>
                 </div>
               </div>
 

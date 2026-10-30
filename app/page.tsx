@@ -88,8 +88,8 @@ function getServiceDescription(name: string): string {
   if (name === "Back Massage") return "Therapeutic back massage focused on relieving muscle tension, improving blood flow, and restoring comfort.";
 
   // Special Packages
-  if (name === "Party Package") return "Complete party-ready bundle — Makeup + Hair + Saree Draping. Perfect for receptions, birthdays, and celebrations.";
-  if (name === "Bridal Package") return "All-inclusive bridal bundle — Makeup + Hair + Saree Draping.";
+  if (name === "Party Package") return "Get party-ready in one relaxed session, with makeup, hair, and saree draping all taken care of for you.\n\nCelebrating with friends or family, or planning more than one look? We'd be happy to include them. Just let us know when you reach out, and we'll tailor everything for you.";
+  if (name === "Bridal Package") return "Your wedding day, beautifully done. Bridal makeup, hair, and saree or lehenga draping for your main look, so you can relax and enjoy every moment.\n\nPlanning mehendi, sangeet, or reception looks, a trial session, or getting your bridal party ready too? We'd love to make it all part of your package.";
 
   // Travel & Add-ons
   if (name.includes("Travel")) return "Distance-based travel fee for on-location services. Final fee confirmed before booking.";
@@ -405,9 +405,10 @@ export default async function Home() {
               <CategorySection
                 id="packages"
                 title="Special Packages"
-                description="Bundled services with built-in savings for parties and bridal bookings."
+                description="Your celebration deserves a look that's made just for you. Every event is a little different, so we'd love to hear about yours first. Tell us about your day, and we'll put together a package that fits your looks, your people, and your schedule."
                 imageUrl="/service-images/bridal-package-service.png"
-                services={packageServices.map((service) => ({ ...service, description: getServiceDescription(service.name) }))}
+                // Packages are tailored per event, so hide the base price publicly
+                services={packageServices.map((service) => ({ ...service, priceDefault: null, description: getServiceDescription(service.name) }))}
               />
             </div>
           )}

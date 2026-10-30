@@ -4,10 +4,10 @@ const prisma = new PrismaClient();
 
 const defaultServices = [
   // ── Makeup Services ──
-  { name: "Basic Everyday Glam", priceDefault: 6000, imageUrl: "/service-images/hero_picture.png" },
-  { name: "Party & Event Look", priceDefault: 8000, imageUrl: "/service-images/hero_picture.png" },
-  { name: "Bridal Makeup", priceDefault: 8000, imageUrl: "/service-images/hero_picture.png" },
-  { name: "Hair Styles", priceDefault: 5000, imageUrl: "/service-images/hero_picture.png" },
+  { name: "Basic Everyday Glam", priceDefault: 8000, imageUrl: "/service-images/hero_picture.png" },
+  { name: "Party & Event Look", priceDefault: 10000, imageUrl: "/service-images/hero_picture.png" },
+  { name: "Bridal Makeup", priceDefault: null, imageUrl: "/service-images/hero_picture.png" },
+  { name: "Hair Styles", priceDefault: 7500, imageUrl: "/service-images/hero_picture.png" },
 
   // ── Saree Services ──
   { name: "Saree Pre-pleating", priceDefault: 2500, imageUrl: "/service-images/saree-draping-service.png" },
@@ -63,8 +63,8 @@ const defaultServices = [
   { name: "Back Massage", priceDefault: 2500, imageUrl: "/service-images/hair-oil-massage-service.png" },
 
   // ── Special Packages ──
-  { name: "Party Package", priceDefault: 16000, imageUrl: "/service-images/bridal-package-service.png" },
-  { name: "Bridal Package", priceDefault: 22000, imageUrl: "/service-images/bridal-package-service.png" },
+  { name: "Party Package", priceDefault: null, imageUrl: "/service-images/bridal-package-service.png" },
+  { name: "Bridal Package", priceDefault: null, imageUrl: "/service-images/bridal-package-service.png" },
 
   // ── Travel & Add-ons ──
   { name: "Travel Within 5 Miles", priceDefault: 1000, imageUrl: "/service-images/travel-within-5-miles-service.png" },

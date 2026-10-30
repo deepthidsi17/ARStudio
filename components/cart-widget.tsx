@@ -1,7 +1,7 @@
 "use client";
 
 import { useCart } from "./cart-context";
-import { centsToCurrency } from "@/lib/utils";
+import { formatTotal } from "@/lib/utils";
 import { useState } from "react";
 import { CheckoutModal } from "./checkout-modal";
 
@@ -39,7 +39,7 @@ export function CartWidget() {
           <div className="flex items-center gap-6 w-full sm:w-auto mt-2 sm:mt-0 justify-between sm:justify-end shrink-0">
             <div className="text-right hidden sm:block">
               <p className="text-xs text-stone-500 uppercase tracking-widest font-semibold">Total From</p>
-              <p className="text-xl font-bold text-stone-900 tracking-tight">{centsToCurrency(total)}</p>
+              <p className="text-xl font-bold text-stone-900 tracking-tight">{formatTotal(items, total)}</p>
             </div>
             <button
               onClick={() => setIsModalOpen(true)}

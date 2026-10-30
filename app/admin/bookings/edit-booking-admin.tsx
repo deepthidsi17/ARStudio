@@ -18,7 +18,10 @@ export default function EditBookingAdmin({
   const [timeStr, setTimeStr] = useState("");
   const [endTimeStr, setEndTimeStr] = useState("");
   const [selectedServiceIds, setSelectedServiceIds] = useState<string[]>([]);
+  const [prices, setPrices] = useState<Record<string, string>>({});
   const [isSaving, setIsSaving] = useState(false);
+
+  const toDollars = (cents: number | null | undefined) => (cents ? (cents / 100).toFixed(2) : "");
 
   const handleEdit = () => {
     const zonedD = toZonedTime(new Date(appt.scheduledAt), STUDIO_TZ);
@@ -30,19 +33,31 @@ export default function EditBookingAdmin({
     setEndTimeStr(format(zonedEnd, "HH:mm"));
 
     setSelectedServiceIds(appt.services.map((s: any) => s.serviceId));
+    // Keep the price already agreed on this booking, falling back to the service default
+    const initialPrices: Record<string, string> = {};
+    for (const s of appt.services) {
+      const service = allServices.find((x) => x.id === s.serviceId);
+      initialPrices[s.serviceId] = toDollars(s.priceCents ?? service?.priceDefault);
+    }
+    setPrices(initialPrices);
     setIsEditing(true);
   };
 
   const handleSave = async () => {
     if (!dateStr || !timeStr || !endTimeStr || selectedServiceIds.length === 0) return;
     setIsSaving(true);
-    await updateAppointmentAdmin(appt.id, `${dateStr}T${timeStr}:00`, `${dateStr}T${endTimeStr}:00`, selectedServiceIds);
+    const selectedPrices = Object.fromEntries(selectedServiceIds.map((id) => [id, prices[id] ?? ""]));
+    await updateAppointmentAdmin(appt.id, `${dateStr}T${timeStr}:00`, `${dateStr}T${endTimeStr}:00`, selectedServiceIds, selectedPrices);
     setIsSaving(false);
     setIsEditing(false);
   };
 
   const toggleService = (id: string) => {
-    setSelectedServiceIds(prev => 
+    if (!selectedServiceIds.includes(id) && prices[id] === undefined) {
+      const service = allServices.find((x) => x.id === id);
+      setPrices(prev => ({ ...prev, [id]: toDollars(service?.priceDefault) }));
+    }
+    setSelectedServiceIds(prev =>
       prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
     );
   };
@@ -69,7 +84,7 @@ export default function EditBookingAdmin({
             {appt.services.map((s: any) => (
               <li key={s.id} className="flex justify-between">
                 <span>{s.serviceName}</span>
-                <span>{centsToCurrency(s.priceCents || 0)}</span>
+                <span>{s.priceCents == null ? "Custom — set price" : centsToCurrency(s.priceCents)}</span>
               </li>
             ))}
           </ul>
@@ -121,11 +136,33 @@ export default function EditBookingAdmin({
               />
               <span className="leading-tight">
                 {service.name} <br/>
-                <span className="text-stone-500">{centsToCurrency(service.priceDefault || 0)}</span>
+                <span className="text-stone-500">{service.priceDefault == null ? "Custom" : centsToCurrency(service.priceDefault)}</span>
               </span>
             </label>
           ))}
         </div>
+      </div>
+
+      <div className="space-y-2 border-t border-stone-200 pt-2">
+        <p className="text-xs font-bold text-stone-800">Prices for this booking ($):</p>
+        {selectedServiceIds.map(id => {
+          const service = allServices.find(x => x.id === id);
+          return (
+            <label key={id} className="flex items-center justify-between gap-2 text-xs text-stone-700">
+              <span className="leading-tight">{service?.name}</span>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                inputMode="decimal"
+                placeholder="Set price"
+                value={prices[id] ?? ""}
+                onChange={e => setPrices(prev => ({ ...prev, [id]: e.target.value }))}
+                className="w-24 text-xs rounded border-stone-300 py-1 text-right"
+              />
+            </label>
+          );
+        })}
       </div>
 
       <div className="flex gap-2 justify-end mt-2 pt-3 border-t border-stone-200">

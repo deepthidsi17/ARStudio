@@ -4,9 +4,15 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { sendBookingModifiedEmail, sendBookingCancelledEmail, sendBookingCompletedEmail } from "@/lib/email";
 import { fromZonedTime } from "date-fns-tz";
-import { STUDIO_TZ } from "@/lib/utils";
+import { STUDIO_TZ, dollarsToCents } from "@/lib/utils";
 
-export async function updateAppointmentAdmin(id: string, newStartStr: string, newEndStr: string, newServiceIds: string[]) {
+export async function updateAppointmentAdmin(
+  id: string,
+  newStartStr: string,
+  newEndStr: string,
+  newServiceIds: string[],
+  priceOverrides: Record<string, string> = {}
+) {
   const existing = await prisma.appointment.findUnique({
     where: { id },
     include: { services: true }
@@ -20,7 +26,10 @@ export async function updateAppointmentAdmin(id: string, newStartStr: string, ne
   const services = await prisma.service.findMany({
     where: { id: { in: newServiceIds } }
   });
-  const totalPriceCents = services.reduce((sum, s) => sum + (s.priceDefault || 0), 0);
+  // Admin-entered price wins; custom-priced services (no default) stay null until set
+  const priceFor = (s: { id: string; priceDefault: number | null }) =>
+    s.id in priceOverrides ? dollarsToCents(priceOverrides[s.id]) : s.priceDefault;
+  const totalPriceCents = services.reduce((sum, s) => sum + (priceFor(s) || 0), 0);
 
   const fullyUpdated = await prisma.appointment.update({
     where: { id },
@@ -33,7 +42,7 @@ export async function updateAppointmentAdmin(id: string, newStartStr: string, ne
         create: services.map(s => ({
           serviceId: s.id,
           serviceName: s.name,
-          priceCents: s.priceDefault
+          priceCents: priceFor(s)
         }))
       }
     },

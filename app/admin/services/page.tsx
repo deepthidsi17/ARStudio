@@ -71,7 +71,7 @@ export default async function ServicesPage({ searchParams }: ServicesPageProps) 
                 <div className="grid gap-4 md:grid-cols-[1.2fr_200px_220px_140px] md:items-end">
                   <div>
                     <p className="text-base font-semibold text-stone-900">{service.name}</p>
-                    <p className="text-sm text-stone-500">Current: {centsToCurrency(service.priceDefault ?? 0)}</p>
+                    <p className="text-sm text-stone-500">Current: {service.priceDefault == null ? "Custom (set per booking)" : centsToCurrency(service.priceDefault)}</p>
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-stone-700" htmlFor={`price-${service.id}`}>

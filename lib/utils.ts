@@ -42,6 +42,12 @@ export function centsToCurrency(cents: number | null | undefined): string {
   }).format(value);
 }
 
+// Cart items with no public price (e.g. packages) are planned with the client
+export function formatTotal(items: { priceDefault: number | null }[], total: number): string {
+  if (!items.some((item) => item.priceDefault === null)) return centsToCurrency(total);
+  return total > 0 ? `${centsToCurrency(total)} + package` : "Personalized";
+}
+
 export function dollarsToCents(input: string | FormDataEntryValue | null | undefined): number | null {
   const raw = String(input ?? "").trim();
   if (!raw) return null;

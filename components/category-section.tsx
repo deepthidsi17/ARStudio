@@ -52,10 +52,16 @@ export default function CategorySection({ id, title, description, services }: Ca
                 <div className="flex items-center justify-between gap-2 p-4 sm:p-6">
                   <h4 className="text-base sm:text-lg font-semibold text-stone-900 leading-tight pr-2">{service.name}</h4>
                   <div className="flex items-center gap-2 sm:gap-4 shrink-0">
-                    <span className="inline-flex items-center text-sm font-medium text-stone-800 whitespace-nowrap">
-                      <span className="text-stone-500 mr-1 text-xs">From</span>
-                      {centsToCurrency(service.priceDefault ?? 0)}
-                    </span>
+                    {service.priceDefault === null ? (
+                      <span className="hidden sm:inline text-xs font-medium italic text-rose-700 whitespace-nowrap">
+                        Let&apos;s Plan Together
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center text-sm font-medium text-stone-800 whitespace-nowrap">
+                        <span className="text-stone-500 mr-1 text-xs">From</span>
+                        {centsToCurrency(service.priceDefault)}
+                      </span>
+                    )}
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -71,7 +77,7 @@ export default function CategorySection({ id, title, description, services }: Ca
                           : "bg-stone-900 text-white hover:bg-stone-800"
                       }`}
                     >
-                      {inCart ? "Added" : "+ Add"}
+                      {inCart ? "Added" : service.priceDefault === null ? "Start Planning" : "+ Add"}
                     </button>
                     <span className="text-stone-400 ml-[-4px] sm:ml-0">
                       <svg
@@ -96,7 +102,7 @@ export default function CategorySection({ id, title, description, services }: Ca
                 >
                   <div className="overflow-hidden">
                     <div className="border-t border-stone-100 px-5 pb-6 pt-4 sm:px-6">
-                      <p className="text-sm leading-relaxed text-stone-600">
+                      <p className="text-sm leading-relaxed text-stone-600 whitespace-pre-line">
                         {service.description}
                       </p>
                     </div>
